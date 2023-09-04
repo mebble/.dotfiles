@@ -1,0 +1,34 @@
+{
+    "workbench.colorTheme": "GitHub Blue",
+    "files.insertFinalNewline": true,
+    "files.trimFinalNewlines": true,
+    "files.trimTrailingWhitespace": true,
+    "[markdown]": {
+        "editor.wordWrap": "off"
+    },
+    // https://github.com/tailwindlabs/tailwindcss-intellisense/issues/400#issuecomment-1218494303
+    "tailwindCSS.experimental.classRegex": [
+        ":class\\s+\"([^\"]*)\"",
+        ":[\\w-.#>]+\\.([\\w-]*)"
+    ],
+    "tailwindCSS.includeLanguages": {
+        "clojure": "html"
+    },
+    "git.openRepositoryInParentFolders": "never",
+    "svelte.enable-ts-plugin": true,
+    "vim.smartRelativeLine": true,
+    "vim.insertModeKeyBindings": [
+        {
+            "before": ["k", "j"],
+            "after": ["<esc>"]
+        }
+    ],
+    "vim.useSystemClipboard": true,
+    "calva.prettyPrintingOptions": {
+        "printEngine": "pprint",
+        "enabled": true,
+        "width": 120,
+        "maxLength": 50
+    },
+    "calva.paredit.defaultKeyMap": "strict"
+}

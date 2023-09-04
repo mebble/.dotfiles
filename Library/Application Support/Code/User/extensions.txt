@@ -1,0 +1,8 @@
+betterthantomorrow.calva
+bradlc.vscode-tailwindcss
+denoland.vscode-deno
+eamodio.gitlens
+larxx.github-blue
+svelte.svelte-vscode
+teabyii.ayu
+vscodevim.vim

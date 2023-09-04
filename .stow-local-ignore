@@ -1,0 +1,8 @@
+# Manifests
+Makefile
+README.md
+.git
+.gitmodules
+
+# Submodules
+personal

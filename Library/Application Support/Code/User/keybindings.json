@@ -1,0 +1,21 @@
+// Place your key bindings in this file to override the defaults
+[
+    { "key": "shift+cmd+[",      "command": "workbench.action.previousEditor" },
+    { "key": "shift+cmd+]",      "command": "workbench.action.nextEditor" },
+    { "key": "cmd+n",            "command": "workbench.action.files.newUntitledFile" },
+    { "key": "ctrl+g",           "command": "workbench.action.gotoLine" },
+    { "key": "alt+cmd+left",     "command": "workbench.action.navigateBack",    "when": "canNavigateBack" },
+    { "key": "alt+cmd+right",    "command": "workbench.action.navigateForward", "when": "canNavigateForward" },
+    { "key": "ctrl+shift+right", "command": "editor.action.smartSelect.expand", "when": "editorTextFocus" },
+    { "key": "ctrl+shift+left",  "command": "editor.action.smartSelect.shrink", "when": "editorTextFocus" },
+    { "key": "shift+cmd+\\",     "command": "editor.action.jumpToBracket",      "when": "editorTextFocus" },
+    { "key": "cmd+.",            "command": "editor.action.quickFix",           "when": "editorHasCodeActionsProvider && editorTextFocus && !editorReadonly" },
+    { "key": "shift+cmd+v",      "command": "markdown.showPreview",             "when": "!notebookEditorFocused && editorLangId == 'markdown'" },
+    { "key": "cmd+k v",          "command": "markdown.showPreviewToSide",       "when": "!notebookEditorFocused && editorLangId == 'markdown'" },
+    { "key": "ctrl+alt+right",   "command": "paredit.slurpSexpForward",         "when": "calva:keybindingsEnabled && editorTextFocus && editorLangId == 'clojure' && paredit:keyMap =~ /original|strict/" },
+    { "key": "ctrl+alt+left",    "command": "paredit.barfSexpForward",          "when": "calva:keybindingsEnabled && editorTextFocus && editorLangId == 'clojure' && paredit:keyMap =~ /original|strict/" },
+
+    // https://calva.io/vim/
+    { "key": "escape",           "command": "-calva.clearInlineResults" },
+    { "key": "shift+escape",     "command": "calva.clearInlineResults",         "when": "editorTextFocus && !editorHasMultipleSelections && !editorReadOnly && !hasOtherSuggestions && !suggestWidgetVisible && editorLangId == 'clojure'" }
+]
