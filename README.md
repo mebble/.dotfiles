@@ -1,5 +1,10 @@
 # .dotfiles
 
+## Setup
+
+```sh 
+make start
+```
 
 ## Extra Setup
 
@@ -8,7 +13,6 @@ Iterm2 profile
 ```
 We'll have to manually load this config file into Iterm. Also set Preferences -> Appearance -> General -> Theme = Compact or Minimal
 https://apple.stackexchange.com/a/293988
-Install fonts using: https://github.com/ryanoasis/nerd-fonts#option-4-homebrew-fonts so that nvim icons show up correctly
 ```
 
 VS Code Extensions
@@ -22,12 +26,6 @@ VS Code User Settings
 
 ```
 https://stackoverflow.com/questions/39972335/how-do-i-press-and-hold-a-key-and-have-it-repeat-in-vscode
-```
-
-Grafana config file
-
-```
-Copy the (symlinked) config to /opt/homebrew/etc/grafana/grafana.ini as another symlink
 ```
 
 ## Resources

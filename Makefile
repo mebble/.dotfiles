@@ -1,8 +1,15 @@
-install:
-	@echo 'Install brew through curl script'
+start:
+	@echo 'Install brew through curl script found at'
 	@echo 'https://brew.sh/'
-	# run brewfile
 	@echo
+	@echo 'Then run `make install`'
+
+install:
+	brew bundle --file ~/.dotfiles/.config/brew/Brewfile
+	@echo
+	@echo 'Now run `make install-manual`'
+
+install-manual:
 	@echo 'Install other programs through curl script'
 	@echo 'https://github.com/nvm-sh/nvm'
 	@echo 'https://deno.com/'
@@ -24,4 +31,12 @@ install:
 	@echo 'Sublime Merge'
 	@echo 'iTerm2'
 	@echo
-	# stow .
+	@echo 'Then run `make release`'
+
+release:
+	@echo 'Releasing dotfiles'
+	stow -d ~/.dotfiles/ -t ~/ -S .
+	stow -d ~/.dotfiles/ -t ~/ -S personal
+	@echo
+	@echo 'Releasing dotfiles outside of ~/'
+	cp -P ~/.config/grafana/grafana.ini /opt/homebrew/etc/grafana/grafana.ini
