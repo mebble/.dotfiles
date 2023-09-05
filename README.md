@@ -6,29 +6,41 @@
 make start
 ```
 
-## Extra Setup
+### Extra Setup
 
 Iterm2 profile
 
-```
-We'll have to manually load this config file into Iterm. Also set Preferences -> Appearance -> General -> Theme = Compact or Minimal
-https://apple.stackexchange.com/a/293988
+- We'll have to manually load the config file into Iterm.
+- Also set Preferences -> Appearance -> General -> Theme = Compact or Minimal
+- See https://apple.stackexchange.com/a/293988
+
+## Onboard
+
+Some dotfiles need to updated manually after a certain change has been made to the system. This section describes how to update them.
+
+_Note: Do not replace the files because they are symlinks. Write to them instead_
+
+Brewfile
+
+```sh
+pushd ~/.config/brew/
+brew bundle dump --describe
+popd
 ```
 
-VS Code Extensions
+VSCode
 
-```
-Before onboarding, run: code --list-extensions > <src>, then onboard to dotfiles. After releasing this dotfile, install the extensions with: cat <src> | xargs -L 1 echo code --install-extension
-https://stackoverflow.com/a/49398449
+```sh 
+code --list-extensions > ~/Library/Application\ Support/Code/User/extensions.txt
 ```
 
-VS Code User Settings
+Iterm2 profile
 
-```
-https://stackoverflow.com/questions/39972335/how-do-i-press-and-hold-a-key-and-have-it-repeat-in-vscode
-```
+- Go to Settings -> Profiles -> Other Actions -> Save Profile as JSON
+- Run `cat <output> > ~/.config/iterm2/profile.json`
 
 ## Resources
 
 - [~/.dotfiles in 100 Seconds](https://www.youtube.com/watch?v=r_MpUP6aKiQ)
 - [GNU Stow](https://www.gnu.org/software/stow/manual/stow.html)
+- [ThePrimeagen/.dotfiles](https://github.com/ThePrimeagen/.dotfiles)

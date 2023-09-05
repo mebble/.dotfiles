@@ -40,3 +40,9 @@ release:
 	@echo
 	@echo 'Releasing dotfiles outside of ~/'
 	cp -P ~/.config/grafana/grafana.ini /opt/homebrew/etc/grafana/grafana.ini
+	@echo
+	@echo 'Performing final steps'
+	# https://stackoverflow.com/a/44010683
+	defaults write com.microsoft.VSCode ApplePressAndHoldEnabled -bool false
+	# https://stackoverflow.com/a/49398449
+	cat ~/Library/Application\ Support/Code/User/extensions.txt | xargs -L 1 echo code --install-extension
