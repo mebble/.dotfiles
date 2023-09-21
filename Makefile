@@ -46,3 +46,6 @@ release:
 	defaults write com.microsoft.VSCode ApplePressAndHoldEnabled -bool false
 	# https://stackoverflow.com/a/49398449
 	cat ~/Library/Application\ Support/Code/User/extensions.txt | xargs -L 1 echo code --install-extension
+	# https://karabiner-elements.pqrs.org/docs/help/how-to/key-repeat/
+	defaults write -g InitialKeyRepeat -int 15
+	defaults write -g KeyRepeat -int 5
