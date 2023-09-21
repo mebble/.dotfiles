@@ -360,8 +360,9 @@ vim.keymap.set('n', '<C-i>', '<C-i>zz')
 vim.keymap.set('n', 'N', 'Nzz')
 vim.keymap.set('n', 'n', 'nzz')
 vim.keymap.set('x', '<leader>y', '"+y', { desc = '[Y]ank to system clipboard' })
-vim.keymap.set('x', 'bd', '"_d', { desc = '[B]lackhole [D]elete #leaderless' })
-vim.keymap.set('x', 'bp', '"_dP', { desc = '[B]lackhole [P]aste #leaderless' })
+vim.keymap.set('x', '[p', '"_dP', { desc = '[P]aste and to blackhole register #leaderless' })
+vim.keymap.set({ 'n', 'x' }, '[d', '"_d', { desc = '[D]elete to blackhole register #leaderless' })
+vim.keymap.set({ 'n', 'x' }, '[x', '"_x', { desc = '[X]elete to blackhole register #leaderless' })
 vim.keymap.set('n', '<leader>fn', '<cmd>cnext<CR>zz', { desc = 'Quick[F]ix [N]ext' })
 vim.keymap.set('n', '<leader>fp', '<cmd>cprev<CR>zz', { desc = 'Quick[F]ix [P]revious' })
 vim.keymap.set('n', '<leader>fc', '<cmd>cclose<CR>', { desc = 'Quick[F]ix [C]lose' })
@@ -379,8 +380,8 @@ vim.keymap.set('t', '<esc>', [[<C-\><C-n>]])
 -- [[ Configure Comment.nvim ]]
 -- See `:help comment.config`
 require('Comment').setup({
-  toggler = { line = 'gll' },
-  opleader = { line = 'gl' },
+  toggler = { line = 'gll' }, -- #leaderless
+  opleader = { line = 'gl' }, -- #leaderless
 })
 
 -- [[ Highlight on yank ]]
@@ -409,6 +410,20 @@ vim.keymap.set('n', '<C-n>', "<cmd>NvimTreeToggle<CR>", { desc = 'Toggle nvimtre
 -- See `:help telescope` and `:help telescope.setup()`
 require('telescope').setup {
   defaults = {
+
+    -- https://www.reddit.com/r/neovim/comments/tnj64d/question_telescope_opening_files_with_the_ability/
+    -- https://github.com/nvim-tree/nvim-tree.lua/blob/a3aa3b47eac8b6289f028743bef4ce9eb0f6782e/lua/nvim-tree/actions/node/open-file.lua#L126
+    -- get_selection_window = function(_picker, _entry)
+    --   local windows = vim.api.nvim_list_wins()
+    --   local current_win = vim.api.nvim_get_current_win()
+    --   for _, winnr in ipairs(windows) do
+    --     if winnr ~= current_win then
+    --       return winnr
+    --     end
+    --   end
+    --   return 0
+    -- end,
+
     -- See `:help telescope.layout`
     layout_strategy = 'horizontal',
     layout_config = {
@@ -436,6 +451,7 @@ require('telescope').setup {
     file_browser = {
       -- https://github.com/nvim-telescope/telescope-file-browser.nvim/issues/300
       hidden = true,
+      follow_symlinks = true,
     }
   },
 }
@@ -675,7 +691,7 @@ cmp.setup {
     ['<C-Space>'] = cmp.mapping.complete {},
     ['<CR>'] = cmp.mapping.confirm {
       behavior = cmp.ConfirmBehavior.Replace,
-      select = true,
+      select = false,
     },
 
     -- https://www.youtube.com/watch?v=_DnmphIwnjo&t=7m49s
