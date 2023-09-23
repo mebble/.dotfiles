@@ -370,6 +370,16 @@ vim.keymap.set('n', '<leader>n', '<cmd>bnext<CR>', { desc = '[N]ext buffer' })
 vim.keymap.set('n', '<leader>p', '<cmd>bprevious<CR>', { desc = '[P]revious buffer' })
 vim.keymap.set('n', '<leader>x', '<cmd>bp<bar>sp<bar>bn<bar>bd<CR>', { desc = 'Close buffer' })
 
+local function group_text_in(char1, char2, desc)
+  vim.keymap.set('x', 'gi' .. char1, '"zygvc' .. char1 .. char2 .. '<esc>"zP', { desc = desc })
+end
+group_text_in("'", "'", '[G]roup [I]n single quotes #leaderless')
+group_text_in('"', '"', '[G]roup [I]n double quotes #leaderless')
+group_text_in('(', ')', '[G]roup [I]n parentheses #leaderless')
+group_text_in('{', '}', '[G]roup [I]n curly braces #leaderless')
+group_text_in('[', ']', '[G]roup [I]n square brackets #leaderless')
+group_text_in('<', '>', '[G]roup [I]n angle brackets #leaderless')
+
 -- https://vi.stackexchange.com/a/18081
 -- https://www.reddit.com/r/neovim/comments/yg2d9v/how_do_i_exit_the_terminal_mode/
 -- vim.keymap.set('i', 'kj', '<esc>')
