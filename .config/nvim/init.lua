@@ -242,6 +242,16 @@ require('lazy').setup({
   {
     'nvim-tree/nvim-web-devicons'
   },
+  {
+    "ray-x/lsp_signature.nvim",
+    event = "VeryLazy",
+    opts = {
+      hint_enable = false,
+    },
+    config = function(_, opts)
+      require('lsp_signature').setup(opts)
+    end
+  },
   -- NOTE: Next Step on Your Neovim Journey: Add/Configure additional "plugins" for kickstart
   --       These are some example plugins that I've included in the kickstart repository.
   --       Uncomment any of the lines below to enable them.
@@ -412,7 +422,13 @@ vim.api.nvim_create_autocmd('TextYankPost', {
 vim.g.loaded_netrw = 1
 vim.g.loaded_netrwPlugin = 1
 
-require("nvim-tree").setup()
+require("nvim-tree").setup({
+  -- See `:help nvim-tree-opts-update-focused-file`
+  update_focused_file = {
+    enable = true,
+    update_root = false,
+  },
+})
 
 vim.keymap.set('n', '<C-n>', "<cmd>NvimTreeToggle<CR>", { desc = 'Toggle nvimtree' })
 
@@ -486,7 +502,8 @@ vim.keymap.set('n', '<leader>sw', require('telescope.builtin').grep_string, { de
 vim.keymap.set('n', '<leader>sg', require('telescope.builtin').live_grep, { desc = '[S]earch by [G]rep' })
 vim.keymap.set('n', '<leader>sd', require('telescope.builtin').diagnostics, { desc = '[S]earch [D]iagnostics' })
 vim.keymap.set('n', '<leader>sc', require('telescope.builtin').commands, { desc = '[S]earch [C]ommands' })
-vim.keymap.set('n', '<leader>sr', require('telescope.builtin').command_history, { desc = '[S]earch [R]ecent commands' })
+vim.keymap.set('n', '<leader>so', require('telescope.builtin').command_history, { desc = '[S]earch [O]ld commands' })
+vim.keymap.set('n', '<leader>sr', require('telescope.builtin').resume, { desc = '[S]earch [R]esume' })
 vim.keymap.set('n', '<leader>sp', require('telescope').extensions.luasnip.luasnip, { desc = '[S]earch sni[P]pits' })
 vim.keymap.set('n', '<leader>fb', require('telescope').extensions.file_browser.file_browser, { desc = '[F]ile [B]rowser' })
 
@@ -584,7 +601,7 @@ local on_attach = function(_, bufnr)
 
   nmap('gd', require('telescope.builtin').lsp_definitions, '[G]oto [D]efinition #leaderless')
   nmap('gr', require('telescope.builtin').lsp_references, '[G]oto [R]eferences #leaderless')
-  nmap('gI', vim.lsp.buf.implementation, '[G]oto [I]mplementation #leaderless')
+  nmap('gI', require('telescope.builtin').lsp_implementations, '[G]oto [I]mplementation #leaderless')
   nmap('<leader>D', vim.lsp.buf.type_definition, 'Type [D]efinition')
   nmap('<leader>ds', require('telescope.builtin').lsp_document_symbols, '[D]ocument [S]ymbols')
   nmap('<leader>ws', require('telescope.builtin').lsp_dynamic_workspace_symbols, '[W]orkspace [S]ymbols')

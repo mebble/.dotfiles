@@ -121,7 +121,7 @@ uniqx() {
 alias ls="exa -l"
 alias la="exa -la"
 alias vim="nvim"
-alias sr="history | sort -r | cut -c 8- | uniqx | fzf | xargs echo -n | pbcopy"  # [S]earch [R]ecent commands
+alias so="history | sort -r | cut -c 8- | uniqx | fzf | xargs echo -n | pbcopy"  # [S]earch [O]ld commands
 alias sf='fd --type f -H --exclude .git | fzf | xargs echo -n | pbcopy'          # [S]earch [F]iles
 alias sfi='fd --type f -H -d 1 | fzf | xargs echo -n | pbcopy'                   # [S]earch [F]iles [I]n current directory
 alias sd='cd $(fd --type d -H --exclude .git | fzf || dirname .)'                # [S]earch [D]irectories
