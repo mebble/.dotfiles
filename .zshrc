@@ -118,6 +118,8 @@ uniqx() {
   awk '{ if (!h[$0]) { print $0; h[$0]=1 } }'
 }
 
+export FZF_DEFAULT_OPTS='--cycle'
+
 alias ls="exa -l"
 alias la="exa -la"
 alias vim="nvim"
@@ -127,6 +129,8 @@ alias sfi='fd --type f -H -d 1 | fzf | xargs echo -n | pbcopy'                  
 alias sd='cd $(fd --type d -H --exclude .git | fzf || dirname .)'                # [S]earch [D]irectories
 alias sdi='cd $(fd --type d -H -d 1 | fzf || dirname .)'                         # [S]earch [D]irectories [I]n current directory
 alias si='fd -H -d 1 | fzf | xargs echo -n | pbcopy'                             # [S]earch [I]n current directory
+# https://stackoverflow.com/a/1315213
+alias sl='alias | fzf | grep -e "='\''[^'\'']*'\''" -o --color=never | cut -c 3- | rev | cut -c 2- | rev | xargs echo -n | pbcopy' # [S]earch A[L]iases
 
 # Adding to $PATH stuff
 export PATH="$HOME/.local/bin:$PATH"
