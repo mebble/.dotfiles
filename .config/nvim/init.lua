@@ -390,6 +390,18 @@ group_text_in('{', '}', '[G]roup [I]n curly braces #leaderless')
 group_text_in('[', ']', '[G]roup [I]n square brackets #leaderless')
 group_text_in('<', '>', '[G]roup [I]n angle brackets #leaderless')
 
+local maximized = false
+vim.keymap.set('n', '<leader>z', function()
+  local cmd
+  if maximized then
+    cmd = '<C-w>='
+  else
+    cmd = '<C-w>|<C-w>_'
+  end
+  maximized = not maximized
+  return cmd
+end, { desc = 'Maximi[Z]e window toggle', expr = true })
+
 -- https://vi.stackexchange.com/a/18081
 -- https://www.reddit.com/r/neovim/comments/yg2d9v/how_do_i_exit_the_terminal_mode/
 -- vim.keymap.set('i', 'kj', '<esc>')
@@ -472,6 +484,9 @@ require('telescope').setup {
   },
   pickers = {
     find_files = { follow = true },
+    lsp_definitions = { jump_type = 'vsplit' },
+    lsp_type_definitions = { jump_type = 'vsplit' },
+    lsp_implementations = { jump_type = 'vsplit' },
   },
   extensions = {
     file_browser = {
