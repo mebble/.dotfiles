@@ -24,6 +24,7 @@ Brewfile
 
 ```sh
 pushd ~/.config/brew/
+rm Brewfile
 brew bundle dump --describe
 popd
 ```

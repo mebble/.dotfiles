@@ -22,12 +22,16 @@ brew "fzf"
 brew "gcc"
 # Distributed revision control system
 brew "git"
+# Syntax-highlighting pager for git and diff output
+brew "git-delta"
 # Gorgeous metric visualizations and dashboards for timeseries databases
 brew "grafana", restart_service: true
 # Lightweight and flexible command-line JSON processor
 brew "jq"
 # Ambitious Vim-fork focused on extensibility and agility
 brew "neovim"
+# Cryptography and SSL/TLS Toolkit
+brew "openssl@1.1"
 # Interpreted, interactive, object-oriented programming language
 brew "python@3.11"
 # Reattach process (e.g., tmux) to background
