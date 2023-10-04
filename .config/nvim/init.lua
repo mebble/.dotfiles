@@ -392,6 +392,18 @@ group_text_in('{', '}', '[G]roup [I]n curly braces #leaderless')
 group_text_in('[', ']', '[G]roup [I]n square brackets #leaderless')
 group_text_in('<', '>', '[G]roup [I]n angle brackets #leaderless')
 
+-- [[ Custom Text Objects ]]
+-- https://thevaluable.dev/vim-create-text-objects/
+local chars = { '_', '.', ':', ',', ';', '|', '/', '\\', '*', '+', '%', '`', '?' }
+for _, char in ipairs(chars) do
+  for _, mode in ipairs({ 'x', 'o' }) do
+    -- See `:help nvim_set_keymap` and `:help vim.keymap.set`
+    vim.keymap.set(mode, "i" .. char, string.format(':<C-u>silent! normal! f%sF%slvt%s<CR>', char, char, char), { silent = true, desc = string.format('between two %s', char) })
+    vim.keymap.set(mode, "a" .. char, string.format(':<C-u>silent! normal! f%sF%svf%s<CR>', char, char, char), { silent = true, desc = string.format('around two %s', char) })
+  end
+end
+
+-- [[ Maximise window ]]
 local maximized = false
 vim.keymap.set('n', '<leader>z', function()
   local cmd
