@@ -162,6 +162,8 @@ require('lazy').setup({
         theme = 'onedark',
         disabled_filetypes = {
           'NvimTree',
+          'undotree',
+          'diff',
         },
       },
       sections = {
@@ -251,6 +253,9 @@ require('lazy').setup({
     config = function(_, opts)
       require('lsp_signature').setup(opts)
     end
+  },
+  {
+    "mbbill/undotree",
   },
   -- NOTE: Next Step on Your Neovim Journey: Add/Configure additional "plugins" for kickstart
   --       These are some example plugins that I've included in the kickstart repository.
@@ -381,6 +386,7 @@ vim.keymap.set('n', '<leader>fi', '<cmd>cnewer<CR>', { desc = 'Quick[F]ix View [
 vim.keymap.set('n', '<leader>n', '<cmd>bnext<CR>', { desc = '[N]ext buffer' })
 vim.keymap.set('n', '<leader>p', '<cmd>bprevious<CR>', { desc = '[P]revious buffer' })
 vim.keymap.set('n', '<leader>x', '<cmd>bp<bar>sp<bar>bn<bar>bd<CR>', { desc = 'Close buffer' })
+vim.keymap.set('n', '<leader>u', '<cmd>UndotreeToggle<CR>', { desc = '[U]ndo tree' })
 
 local function group_text_in(char1, char2, desc)
   vim.keymap.set('x', 'gi' .. char1, '"zygvc' .. char1 .. char2 .. '<esc>"zP', { desc = desc })
