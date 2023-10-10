@@ -38,6 +38,7 @@ code --list-extensions > ~/Library/Application\ Support/Code/User/extensions.txt
 Iterm2 profile
 
 - Go to Settings -> Profiles -> Other Actions -> Save Profile as JSON
+- Open the output file in vim and run `:%!jq -S`
 - Run `cat <output> > ~/.config/iterm2/profile.json`
 
 ## Resources
