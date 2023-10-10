@@ -422,7 +422,7 @@
   "Non-ASCII Anti Aliased": true,
   "Normal Font": "HackNF-Regular 13",
   "Only The Default BG Color Uses Transparency": true,
-  "Option Key Sends": 0,
+  "Option Key Sends": 2,
   "Prompt Before Closing 2": false,
   "Right Option Key Sends": 0,
   "Rows": 1000,

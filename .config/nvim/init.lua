@@ -499,7 +499,6 @@ require('telescope').setup {
         ['<C-d>'] = require('telescope.actions').preview_scrolling_down,
         ['<C-v>'] = require('telescope.actions').select_vertical,
         ['<C-s>'] = require('telescope.actions').select_horizontal,
-        ["<C-r>"] = require('telescope.actions').send_selected_to_qflist + require('telescope.actions').open_qflist,
       },
     },
   },
