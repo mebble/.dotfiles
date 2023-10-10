@@ -468,20 +468,6 @@ vim.keymap.set('n', '<C-n>', "<cmd>NvimTreeToggle<CR>", { desc = 'Toggle nvimtre
 -- See `:help telescope` and `:help telescope.setup()`
 require('telescope').setup {
   defaults = {
-
-    -- https://www.reddit.com/r/neovim/comments/tnj64d/question_telescope_opening_files_with_the_ability/
-    -- https://github.com/nvim-tree/nvim-tree.lua/blob/a3aa3b47eac8b6289f028743bef4ce9eb0f6782e/lua/nvim-tree/actions/node/open-file.lua#L126
-    -- get_selection_window = function(_picker, _entry)
-    --   local windows = vim.api.nvim_list_wins()
-    --   local current_win = vim.api.nvim_get_current_win()
-    --   for _, winnr in ipairs(windows) do
-    --     if winnr ~= current_win then
-    --       return winnr
-    --     end
-    --   end
-    --   return 0
-    -- end,
-
     -- See `:help telescope.layout`
     layout_strategy = 'horizontal',
     layout_config = {
@@ -499,6 +485,20 @@ require('telescope').setup {
         ['<C-d>'] = require('telescope.actions').preview_scrolling_down,
         ['<C-v>'] = require('telescope.actions').select_vertical,
         ['<C-s>'] = require('telescope.actions').select_horizontal,
+
+        -- https://github.com/nvim-telescope/telescope.nvim/blob/master/developers.md
+        -- https://www.reddit.com/r/neovim/comments/tnj64d/question_telescope_opening_files_with_the_ability/
+        -- https://github.com/nvim-tree/nvim-tree.lua/blob/a3aa3b47eac8b6289f028743bef4ce9eb0f6782e/lua/nvim-tree/actions/node/open-file.lua#L126
+        ["<C-g>"] = function(prompt_bufnr)
+          local actions = require "telescope.actions"
+          local action_state = require "telescope.actions.state"
+
+          actions.close(prompt_bufnr)
+          local selection = action_state.get_selected_entry()
+          local path = selection[1]
+
+          require("nvim-tree.actions.node.open-file").fn('edit', path)
+        end
       },
     },
   },
