@@ -173,6 +173,13 @@ require('lazy').setup({
             path = 1,
           }
         },
+        lualine_x = {
+          function()
+            return vim.t.maximized and '   ' or ''
+          end,
+          'encoding',
+          'filetype',
+        },
       },
     },
   },
@@ -256,6 +263,15 @@ require('lazy').setup({
   },
   {
     "mbbill/undotree",
+  },
+  {
+    'declancm/maximize.nvim',
+    opts = {
+      default_keymaps = false,
+    },
+    config = function(_, opts)
+      require('maximize').setup(opts)
+    end
   },
   -- NOTE: Next Step on Your Neovim Journey: Add/Configure additional "plugins" for kickstart
   --       These are some example plugins that I've included in the kickstart repository.
@@ -387,6 +403,12 @@ vim.keymap.set('n', '<leader>n', '<cmd>bnext<CR>', { desc = '[N]ext buffer' })
 vim.keymap.set('n', '<leader>p', '<cmd>bprevious<CR>', { desc = '[P]revious buffer' })
 vim.keymap.set('n', '<leader>x', '<cmd>bp<bar>sp<bar>bn<bar>bd<CR>', { desc = 'Close buffer' })
 vim.keymap.set('n', '<leader>u', '<cmd>UndotreeToggle<CR>', { desc = '[U]ndo tree' })
+vim.keymap.set('n', '<leader>z', function()
+  require('maximize').toggle()
+  require('lualine').refresh({
+    place = { 'statusline' },
+  })
+end, { desc = 'Maximi[Z]e window toggle' })
 
 local function group_text_in(char1, char2, desc)
   vim.keymap.set('x', 'gi' .. char1, '"zygvc' .. char1 .. char2 .. '<esc>"zP', { desc = desc })
@@ -408,19 +430,6 @@ for _, char in ipairs(chars) do
     vim.keymap.set(mode, "a" .. char, string.format(':<C-u>silent! normal! f%sF%svf%s<CR>', char, char, char), { silent = true, desc = string.format('around two %s', char) })
   end
 end
-
--- [[ Maximise window ]]
-local maximized = false
-vim.keymap.set('n', '<leader>z', function()
-  local cmd
-  if maximized then
-    cmd = '<C-w>='
-  else
-    cmd = '<C-w>|<C-w>_'
-  end
-  maximized = not maximized
-  return cmd
-end, { desc = 'Maximi[Z]e window toggle', expr = true })
 
 -- https://vi.stackexchange.com/a/18081
 -- https://www.reddit.com/r/neovim/comments/yg2d9v/how_do_i_exit_the_terminal_mode/
