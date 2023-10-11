@@ -406,7 +406,6 @@ vim.keymap.set({ 'n', 'x' }, '[x', '"_x', { desc = '[X]elete to blackhole regist
 vim.keymap.set('n', '<leader>n', '<cmd>bnext<CR>', { desc = '[N]ext buffer' })
 vim.keymap.set('n', '<leader>p', '<cmd>bprevious<CR>', { desc = '[P]revious buffer' })
 vim.keymap.set('n', '<leader>x', '<cmd>bp<bar>sp<bar>bn<bar>bd<CR>', { desc = 'Close buffer' })
-vim.keymap.set('n', '<leader>u', '<cmd>UndotreeToggle<CR>', { desc = '[U]ndo tree' })
 vim.keymap.set('n', '<leader>z', function()
   require('maximize').toggle()
   require('lualine').refresh({
@@ -459,6 +458,12 @@ vim.api.nvim_create_autocmd('TextYankPost', {
   group = highlight_group,
   pattern = '*',
 })
+
+
+-- [[ Configure undotree ]]
+-- See `:help undotree.txt`
+vim.g.undotree_SetFocusWhenToggle = 1
+vim.keymap.set('n', '<leader>u', '<cmd>UndotreeToggle<CR>', { desc = '[U]ndo tree' })
 
 -- [[ Configure NvimTree ]]
 -- See `:help nvim-tree-setup`
