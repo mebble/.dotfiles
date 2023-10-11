@@ -74,6 +74,11 @@ require('lazy').setup({
   -- Detect tabstop and shiftwidth automatically
   'tpope/vim-sleuth',
 
+  -- Quality of life
+  'tpope/vim-surround',
+  'tpope/vim-repeat',
+  'michaeljsmith/vim-indent-object',
+
   -- NOTE: This is where your plugins related to LSP can be installed.
   --  The configuration is done below. Search for lspconfig to find it below.
   {
@@ -363,6 +368,10 @@ vim.keymap.set({ 'n', 'v' }, '<Space>', '<Nop>', { silent = true })
 vim.keymap.set('n', 'k', "v:count == 0 ? 'gk' : 'k'", { expr = true, silent = true })
 vim.keymap.set('n', 'j', "v:count == 0 ? 'gj' : 'j'", { expr = true, silent = true })
 
+-- For visual mode in vim-surround
+-- https://www.youtube.com/watch?v=pTVLA62CNqg
+vim.keymap.set('x', 's', 'S', { remap = true })
+
 -- https://github.com/NvChad/NvChad/blob/v2.0/lua/core/mappings.lua
 vim.keymap.set('n', '<esc>', '<cmd>noh<CR>', { desc = 'Clear highlights' })
 vim.keymap.set('n', '<C-h>', '<C-w>h', { desc = 'Window left' })  -- Overridden by the tmux navigate equivalents
@@ -414,16 +423,6 @@ vim.keymap.set('n', '<leader>lp', '<cmd>lprev<CR>zz', { desc = '[L]ocation List 
 vim.keymap.set('n', '<leader>lc', '<cmd>lclose<CR>', { desc = '[L]ocation List [C]lose' })
 vim.keymap.set('n', '<leader>lo', '<cmd>lolder<CR>', { desc = '[L]ocation List View [O]lder list' })
 vim.keymap.set('n', '<leader>li', '<cmd>lnewer<CR>', { desc = '[L]ocation List View [I]Newer list' })
-
-local function group_text_in(char1, char2, desc)
-  vim.keymap.set('x', 'gi' .. char1, '"zygvc' .. char1 .. char2 .. '<esc>"zP', { desc = desc })
-end
-group_text_in("'", "'", '[G]roup [I]n single quotes #leaderless')
-group_text_in('"', '"', '[G]roup [I]n double quotes #leaderless')
-group_text_in('(', ')', '[G]roup [I]n parentheses #leaderless')
-group_text_in('{', '}', '[G]roup [I]n curly braces #leaderless')
-group_text_in('[', ']', '[G]roup [I]n square brackets #leaderless')
-group_text_in('<', '>', '[G]roup [I]n angle brackets #leaderless')
 
 -- [[ Custom Text Objects ]]
 -- https://thevaluable.dev/vim-create-text-objects/
