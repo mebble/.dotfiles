@@ -394,11 +394,6 @@ vim.keymap.set('x', '<leader>y', '"+y', { desc = '[Y]ank to system clipboard' })
 vim.keymap.set('x', '[p', '"_dP', { desc = '[P]aste and to blackhole register #leaderless' })
 vim.keymap.set({ 'n', 'x' }, '[d', '"_d', { desc = '[D]elete to blackhole register #leaderless' })
 vim.keymap.set({ 'n', 'x' }, '[x', '"_x', { desc = '[X]elete to blackhole register #leaderless' })
-vim.keymap.set('n', '<leader>fn', '<cmd>cnext<CR>zz', { desc = 'Quick[F]ix [N]ext' })
-vim.keymap.set('n', '<leader>fp', '<cmd>cprev<CR>zz', { desc = 'Quick[F]ix [P]revious' })
-vim.keymap.set('n', '<leader>fc', '<cmd>cclose<CR>', { desc = 'Quick[F]ix [C]lose' })
-vim.keymap.set('n', '<leader>fo', '<cmd>colder<CR>', { desc = 'Quick[F]ix View [O]lder list' })
-vim.keymap.set('n', '<leader>fi', '<cmd>cnewer<CR>', { desc = 'Quick[F]ix View [I]Newer list' })
 vim.keymap.set('n', '<leader>n', '<cmd>bnext<CR>', { desc = '[N]ext buffer' })
 vim.keymap.set('n', '<leader>p', '<cmd>bprevious<CR>', { desc = '[P]revious buffer' })
 vim.keymap.set('n', '<leader>x', '<cmd>bp<bar>sp<bar>bn<bar>bd<CR>', { desc = 'Close buffer' })
@@ -409,6 +404,16 @@ vim.keymap.set('n', '<leader>z', function()
     place = { 'statusline' },
   })
 end, { desc = 'Maximi[Z]e window toggle' })
+vim.keymap.set('n', '<leader>fn', '<cmd>cnext<CR>zz', { desc = 'Quick[F]ix [N]ext' })
+vim.keymap.set('n', '<leader>fp', '<cmd>cprev<CR>zz', { desc = 'Quick[F]ix [P]revious' })
+vim.keymap.set('n', '<leader>fc', '<cmd>cclose<CR>', { desc = 'Quick[F]ix [C]lose' })
+vim.keymap.set('n', '<leader>fo', '<cmd>colder<CR>', { desc = 'Quick[F]ix View [O]lder list' })
+vim.keymap.set('n', '<leader>fi', '<cmd>cnewer<CR>', { desc = 'Quick[F]ix View [I]Newer list' })
+vim.keymap.set('n', '<leader>ln', '<cmd>lnext<CR>zz', { desc = '[L]ocation List View [N]ext' })
+vim.keymap.set('n', '<leader>lp', '<cmd>lprev<CR>zz', { desc = '[L]ocation List View [P]revious' })
+vim.keymap.set('n', '<leader>lc', '<cmd>lclose<CR>', { desc = '[L]ocation List [C]lose' })
+vim.keymap.set('n', '<leader>lo', '<cmd>lolder<CR>', { desc = '[L]ocation List View [O]lder list' })
+vim.keymap.set('n', '<leader>li', '<cmd>lnewer<CR>', { desc = '[L]ocation List View [I]Newer list' })
 
 local function group_text_in(char1, char2, desc)
   vim.keymap.set('x', 'gi' .. char1, '"zygvc' .. char1 .. char2 .. '<esc>"zP', { desc = desc })
@@ -492,6 +497,8 @@ require('telescope').setup {
       i = {
         ['<C-u>'] = require('telescope.actions').preview_scrolling_up,
         ['<C-d>'] = require('telescope.actions').preview_scrolling_down,
+        ["<C-e>"] = require('telescope.actions').send_to_loclist + require('telescope.actions').open_loclist,
+        ["<M-e>"] = require('telescope.actions').send_selected_to_loclist + require('telescope.actions').open_loclist,
         ['<C-v>'] = require('telescope.actions').select_vertical,
         ['<C-s>'] = require('telescope.actions').select_horizontal,
 
