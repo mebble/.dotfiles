@@ -395,8 +395,8 @@ vim.keymap.set('v', 'J', ":m '>+1<CR>gv=gv")
 vim.keymap.set('v', 'K', ":m '<-2<CR>gv=gv")
 vim.keymap.set('n', '<C-d>', '<C-d>zz')
 vim.keymap.set('n', '<C-u>', '<C-u>zz')
-vim.keymap.set('n', '<C-o>', '<C-o>zz')
-vim.keymap.set('n', '<C-i>', '<C-i>zz')
+-- vim.keymap.set('n', '<C-o>', '<C-o>zz')
+-- vim.keymap.set('n', '<C-i>', '<C-i>zz')
 vim.keymap.set('n', 'N', 'Nzz')
 vim.keymap.set('n', 'n', 'nzz')
 vim.keymap.set('x', '<leader>y', '"+y', { desc = '[Y]ank to system clipboard' })
@@ -405,7 +405,10 @@ vim.keymap.set({ 'n', 'x' }, '[d', '"_d', { desc = '[D]elete to blackhole regist
 vim.keymap.set({ 'n', 'x' }, '[x', '"_x', { desc = '[X]elete to blackhole register #leaderless' })
 vim.keymap.set('n', '<leader>n', '<cmd>bnext<CR>', { desc = '[N]ext buffer' })
 vim.keymap.set('n', '<leader>p', '<cmd>bprevious<CR>', { desc = '[P]revious buffer' })
-vim.keymap.set('n', '<leader>x', '<cmd>bp<bar>sp<bar>bn<bar>bd<CR>', { desc = 'Close buffer' })
+vim.keymap.set('n', '<leader>x', '<cmd>bp<bar>sp<bar>bn<bar>bd<CR>', { desc = '[X]lose buffer, keep window' })
+vim.keymap.set('n', '<leader>t', '<cmd>bdelete<CR>', { desc = 'Go back like <C-[T]>, but by closing buffer and its window' })
+vim.keymap.set('n', '<leader>o', 'o<esc>0"_D', { desc = 'o, but stay in normal mode' })
+vim.keymap.set('n', '<leader>O', 'O<esc>0"_D', { desc = 'O, but stay in normal mode' })
 vim.keymap.set('n', '<leader>z', function()
   require('maximize').toggle()
   require('lualine').refresh({
@@ -515,7 +518,7 @@ require('telescope').setup {
 
           actions.close(prompt_bufnr)
           local selection = action_state.get_selected_entry()
-          local path = selection[1]
+          local path = selection.filename or selection[1]
 
           require("nvim-tree.actions.node.open-file").fn('edit', path)
         end
@@ -524,8 +527,10 @@ require('telescope').setup {
   },
   pickers = {
     find_files = { follow = true },
+
+    -- https://github.com/nvim-telescope/telescope.nvim/issues/2368
     lsp_definitions = { jump_type = 'vsplit' },
-    lsp_type_definitions = { jump_type = 'vsplit' },
+    lsp_references = { jump_type = 'vsplit' },
     lsp_implementations = { jump_type = 'vsplit' },
   },
   extensions = {
@@ -691,7 +696,7 @@ end
 -- https://github.com/neovim/nvim-lspconfig/blob/master/doc/server_configurations.md
 local servers = {
   -- clangd = {},
-  -- gopls = {},
+  gopls = {},
   pyright = {},
   clojure_lsp = {},
   -- rust_analyzer = {},
