@@ -316,6 +316,16 @@ vim.opt.expandtab = true
 vim.opt.tabstop = 8
 vim.opt.softtabstop = 0
 
+-- https://stackoverflow.com/a/2054782/5811761
+local tabstop_group = vim.api.nvim_create_augroup('GolangTabstop', { clear = true })
+vim.api.nvim_create_autocmd('Filetype', {
+  callback = function()
+    vim.opt_local.tabstop = 4
+  end,
+  group = tabstop_group,
+  pattern = 'go',
+})
+
 -- https://stackoverflow.com/a/22614451
 vim.o.splitbelow = true
 vim.o.splitright = true

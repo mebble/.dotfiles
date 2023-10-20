@@ -132,10 +132,11 @@ alias si='fd -H -d 1 | fzf | xargs echo -n | pbcopy'                            
 # https://stackoverflow.com/a/1315213
 alias sl='alias | fzf | grep -e "='\''[^'\'']*'\''" -o --color=never | cut -c 3- | rev | cut -c 2- | rev | xargs echo -n | pbcopy' # [S]earch A[L]iases
 
-# Adding to $PATH stuff
+# Adding stuff to $PATH
 export PATH="$HOME/.local/bin:$PATH"
 export PATH="$PATH:/opt/homebrew/bin"
 export PATH="$DENO_INSTALL/bin:$PATH"
+export PATH="$PATH:$HOME/go/bin"
 
 # Other env vars
 export DENO_INSTALL="/Users/neilsyiemlieh/.deno"  # installed using the deno curl script
