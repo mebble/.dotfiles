@@ -49,3 +49,5 @@ release:
 	# https://karabiner-elements.pqrs.org/docs/help/how-to/key-repeat/
 	defaults write -g InitialKeyRepeat -int 15
 	defaults write -g KeyRepeat -int 5
+	# https://stackoverflow.com/questions/39606031/intellij-key-repeating-idea-vim
+	defaults write -g ApplePressAndHoldEnabled -bool false

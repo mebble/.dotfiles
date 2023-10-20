@@ -1,0 +1,21 @@
+" https://www.youtube.com/watch?v=SDiKLLrUZMI
+" https://www.youtube.com/watch?v=pTVLA62CNqg&t=283s
+set number relativenumber
+set idearefactormode=keep
+
+let mapleader = " "
+
+" https://github.com/JetBrains/ideavim#finding-action-ids
+" https://github.com/JetBrains/ideavim#executing-ide-actions
+nmap <leader>n <Action>(NextTab)
+nmap <leader>p <Action>(PreviousTab)
+nmap <C-l> <Action>(NextSplitter)
+nmap <C-h> <Action>(PrevSplitter)
+
+set ideajoin
+set highlightedyank
+set surround
+vmap s S
+
+" First install https://plugins.jetbrains.com/plugin/15976-which-key
+set which-key
