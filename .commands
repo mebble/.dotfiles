@@ -1,0 +1,302 @@
+# database # db
+
+## sqlite
+.tables
+.help
+.schema sqlite_schema
+select * from sqlite_schema
+
+# zip archives
+tar --list --file <zipfile>
+tar --extract --verbose --file <zipfile>
+tar -xvf <zipfile>
+tar --create --gzip --verbose --file <zipfile> <pathtozip>
+tar -czvf <zipfile> <pathtozip>
+
+# git
+git push origin main~1:main # push only upto parent commit
+
+# ssh
+## list keys added to ssh agent
+ssh-add -l
+ssh-add -l -E sha256
+## add key to ssh agent
+ssh-add ~/.ssh/github_key
+## test ssh connection to host
+ssh -vT git@github.com
+
+# misc
+seq 5 | xargs -t -n 1
+seq 5 | xargs -t -n 1 -P 2
+seq 5 | xargs -t -n 1 -P 2 bash -c 'echo $0; sleep 1'
+seq -s ', ' 5 | xargs -I {} echo [{}]
+seq 1 10 | xargs -I {} echo {}.text
+seq 16 | xargs -I {} bash -c 'tput setaf {} && echo hi'
+seq 16 | xargs -I {} bash -c 'tput setab {} && echo hi'
+tput sgr0 # reset
+
+# info
+curl wttr.in
+curl cht.sh
+curl cheat.sh
+
+# files folders
+find . -type f -name '*.txt'
+find . -type d
+find <dir> -name "<pattern>"
+
+watch ls -l
+watch tree
+
+du -s -h node_modules
+du -d 1 -h node_modules
+
+df -h
+df -hi
+
+ls -1 | grep .txt
+ls -1 | wc -l
+ls -1 -i
+
+ls | xargs ls
+ls | xargs -n 1
+ls -1 | awk -F "." '{ if ($2 == "txt") print $1 }' | xargs -I {} echo 'Dry run: mv {}.txt {}.md'
+ls -1 | awk -F "." '{ if ($2 == "txt") print $1 }' | xargs -I {} mv {}.txt {}.md
+ls -1 | grep .txt | cut -d. -f1 | xargs -I {} echo 'Dry run: mv {}.txt {}.md'
+ls -1 | grep .txt | cut -d. -f1 | xargs -I {} mv {}.txt {}.md
+
+wc -l [file]
+
+chown root:root [file]
+chmod 755 [file]
+chmod 644 [file]
+chmod +x [file]
+chmod -x [file]
+chmod u+x [file]
+chmod g+x [file]
+chmod o+x [file]
+chmod ug+x [file]
+
+## ssh
+scp -i ~/.ssh/pub_key -r ./path/to/src user@host:~/path/to/dest
+scp -i ~/.ssh/pub_key -r user@host:~/path/to/src ./path/to/dest
+
+# shortcuts history
+!!         # resolves to the most recent entry in "history"
+!x         # where x is a number from the output of "history"
+!some-cmd  # resolves to the most recent history entry that matches "some-cmd"
+y          # outputs yyyyyyyy to stdout
+
+# text processing # formatting
+env | column -t -s '='
+
+printf 'hehe\nhaha\n' | sed 's/h/y/'
+printf 'one\ntwo\n\nthree\n' | sed '/^$/d'
+echo 'hi how are you' | sed 's/[a-z]/\U&/g'
+echo $PATH | sed -E 's/:/\n/g'
+echo $PATH | tr ':' '\n'
+sed -i 's/ *$//' [file]
+sed -i 's/[[:space:]]*$//' [file]
+
+printf "one\ntwo\nthree\n" | awk 'BEGIN { print "Numbers:" } { print }'
+echo "abc      def" | awk '{ print $2 }'
+echo "   abc     def" | awk '{ print $2 }'
+ps | awk '{print $1, $4}'
+ps -ef | awk '{ if ($6 != "?" && $6 != "??") print $0 }'
+cat /etc/shadow | column -t -s ':'
+cat /etc/passwd | column -t -s ':'
+cat /etc/passwd | awk -F ':' '{print $1}'
+cat /etc/passwd | awk -F ':' '{print $1"\t"$6"\t"$7}'
+cat /etc/passwd | awk 'BEGIN {FS=":"; OFS="\t"} {print $1, $6, $7}'
+cat /etc/shells | awk -F "/" '/^\// {print $NF}' | uniq
+
+echo "abc      def" | cut -d ' ' -f 1
+echo "abc      def" | cut -d ' ' -f 7
+printf 'this is a line of text\nthis is the second line' | cut -c 1-10
+printf 'this is a line of text\nthis is the second line' | cut -c 11-
+cat /etc/passwd | cut -d ':' -f 1
+
+echo 'this is a line of text' | tr 'aeiou' 'AEIOU'
+echo 'this is a line of text' | tr 'aeiou' 'AEI'
+echo 'this is a line of text' | tr -d 'aeiou'
+echo 'this is a line of text' | tr -d 'aeiou '
+echo 'this is a line of text' | tr -cd 'aeiou\n'
+echo 'this is a line of teeeext yoooo' | tr -s 'aeiou '
+echo 'this is a line of text' | tr '[:lower:]' '[:upper:]'
+head 1 /dev/urandom | tr -cd '[:print:]\n'
+echo 'l33t sp3ck' | tr -cd '[:digit:]\n'
+
+## logs
+tail -f /var/log/dmesg
+tail -f /var/log/syslog
+tail -f /var/log/user.log
+tail -f /var/log/daemon.log
+tail -f /var/log/auth.log
+tail -f /var/log/auth.log | grep -e sshd
+
+# system information
+uname -a
+uname -r
+uname -m
+
+hostname
+hostname -I
+hostname -f
+
+uptime -p
+
+man man
+man 1 printf
+man 3 printf
+man -a printf
+whatis grep
+apropos -s 1 .
+apropos -s 2 .
+apropos -s 3 .
+
+# networking
+
+## dns
+nslookup example.com
+nslookup -type=ns example.com
+nslookup -type=txt example.com
+nslookup -type=cname example.com
+nslookup example.com <nameserver>
+nslookup example.com 1.1.1.1
+nslookup example.com 8.8.8.8
+dig example.com
+dig example.com txt
+dig example.com ns
+dig example.com cname
+dig @<nameserver> example.com
+dig @<nameserver> example.com cname
+dig @<nameserver> example.com ns
+
+## tcp udp sockets
+### netcat
+nc -l 3000 # listen
+nc localhost 3000 # connect
+### See processes and ports used
+netstat
+netstat --tcp
+netstat --program
+netstat --listening
+netstat --tcp --numeric
+
+## configs
+ifconfig | grep en0 -A 5
+ifconfig | grep 'en\d' -A 5
+ifconfig | grep 'utun\d' -A 5
+ifconfig | grep ipsec0 -A 5
+
+## misc
+ping <host>
+traceroute <host>
+curl ipinfo.io
+
+# strace
+strace -h
+strace -y ls
+strace -p <PID>
+strace -s 1000 -e trace=read,write,writev <some-http-server>
+
+strace ls
+strace ping -c 5 google.com
+strace curl example.com
+strace dig example.com
+
+## Grep for certain system calls
+strace -e execve ls
+strace -e openat ls
+strace -e read ls
+strace -e write ls
+strace -e mmap2 ls
+strace -e socket ping google.com
+strace -e socket -y curl example.com
+strace -e connect curl example.com
+
+### Multiple matches
+strace -e trace=read,write node -e "console.log('hello');"
+strace -e trace=read,write,writev -p 377
+strace -e trace=read,write,writev -p 377
+strace -e trace=open google-chrome
+
+## Redirect to stdout so that we can pipe (https://unix.stackexchange.com/a/48225)
+strace ls 2>&1 | grep ENOENT
+strace ls 2>&1 | grep EACCES
+
+## Show strace of subprocesses:
+strace -f ./sirup/sirup sum --repos .
+strace -f -e execve ./sirup/sirup sum --repos .
+
+## System call manpages
+man 2 open
+man 2 writev
+man 2 clock_gettime
+
+# processes
+pstree
+ps              # What's running in the current terminal
+ps -u $(whoami) # All processes running for my user account
+ps --help
+ps --help simple
+ps --help list
+ps -au
+ps -aux
+ps -aux | grep teatime
+ps aux
+ps -ef                            # all processes, formatted
+ps -ef | { head -1; grep lein; }  # with header row included (https://stackoverflow.com/questions/12920317/include-header-in-the-grep-result)
+ps -p pid1,pid2                   # certain PIDs
+
+## Show processes sorted by CPU usage
+top
+htop
+
+## Based on process name
+pgrep systemd
+pgrep ssh-agent
+
+## daemon
+systemctl list-units -t service
+systemctl list-units -t target
+systemctl list-units -t mount
+systemctl list-units -t path
+systemctl list-units -t scope
+systemctl list-units -t device
+systemctl list-units -t socket
+systemctl list-units -t timer
+
+systemctl list-units --all | grep inactive
+systemctl list-unit-files
+
+systemctl status teatime # (defaults to systemctl status teatime.service)
+systemctl status multi-user.target
+systemctl restart teatime
+systemctl reload teatime
+systemctl disable teatime
+systemctl enable teatime
+systemctl is-active sshd
+systemctl is-enabled sshd
+
+systemctl cat teatime
+systemctl cat multi-user.target
+
+systemctl get-default
+
+systemctl list-dependencies
+systemctl list-dependencies teatime
+systemctl list-dependencies multi-user.target
+
+### logs
+journalctl -xe
+journalctl -u teatime
+
+## signals
+kill -l
+kill <PID> # defaults to kill -SIGTERM <PID> or kill -15 <PID>
+kill -SIGTERM <PID>
+kill -SIGKILL <PID>
+kill -SIGINT <PID>  # same as ctrl+c
+kill -SIGSTOP <PID> # same as ctrl+z
+kill -SIGCONT <PID> # same as bg <job-num>

@@ -123,14 +123,15 @@ export FZF_DEFAULT_OPTS='--cycle'
 alias ls="exa -l"
 alias la="exa -la"
 alias vim="nvim"
-alias so="history | sort -r | cut -c 8- | uniqx | fzf | xargs echo -n | pbcopy"  # [S]earch [O]ld commands
-alias sf='fd --type f -H --exclude .git | fzf | xargs echo -n | pbcopy'          # [S]earch [F]iles
-alias sfi='fd --type f -H -d 1 | fzf | xargs echo -n | pbcopy'                   # [S]earch [F]iles [I]n current directory
-alias sd='cd $(fd --type d -H --exclude .git | fzf || dirname .)'                # [S]earch [D]irectories
-alias sdi='cd $(fd --type d -H -d 1 | fzf || dirname .)'                         # [S]earch [D]irectories [I]n current directory
-alias si='fd -H -d 1 | fzf | xargs echo -n | pbcopy'                             # [S]earch [I]n current directory
+alias so="history | sort -r | cut -c 8- | uniqx | fzf | xargs echo -n | pbcopy"           # [S]earch [O]ld commands
+alias sf='fd --type f --type l -H --exclude .git | fzf | xargs echo -n | pbcopy'          # [S]earch [F]iles
+alias sfi='fd --type f --type l -H -d 1 | fzf | xargs echo -n | pbcopy'                   # [S]earch [F]iles [I]n current directory
+alias sd='cd $(fd --type d --type l -H --exclude .git | fzf || dirname .)'                # [S]earch [D]irectories
+alias sdi='cd $(fd --type d --type l -H -d 1 | fzf || dirname .)'                         # [S]earch [D]irectories [I]n current directory
+alias si='fd -H -d 1 | fzf | xargs echo -n | pbcopy'                                      # [S]earch [I]n current directory
 # https://stackoverflow.com/a/1315213
 alias sl='alias | fzf | grep -e "='\''[^'\'']*'\''" -o --color=never | cut -c 3- | rev | cut -c 2- | rev | xargs echo -n | pbcopy' # [S]earch A[L]iases
+alias sc='cat ~/.commands | ltag | fzf | ltag --trim | pbcopy'
 
 # Adding stuff to $PATH
 export PATH="$HOME/.local/bin:$PATH"
