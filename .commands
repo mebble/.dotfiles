@@ -4,7 +4,7 @@
 .tables
 .help
 .schema sqlite_schema
-select * from sqlite_schema
+select * from sqlite_schema;
 
 # zip archives
 tar --list --file <zipfile>
@@ -15,6 +15,10 @@ tar -czvf <zipfile> <pathtozip>
 
 # git
 git push origin main~1:main # push only upto parent commit
+git remote rename origin upstream
+git branch -vv
+git branch master -u origin/master # similar to --set-upstream
+git commit --amend -m
 
 # ssh
 ## list keys added to ssh agent
@@ -60,6 +64,10 @@ ls -1 -i
 
 ls | xargs ls
 ls | xargs -n 1
+
+## renaming file extension
+ls -1 | xargs -I {} basename {} .txt | xargs -I {} echo 'Dry run: mv {}.txt {}.md'
+ls -1 | xargs -I {} basename {} .txt | xargs -I {} mv {}.txt {}.md
 ls -1 | awk -F "." '{ if ($2 == "txt") print $1 }' | xargs -I {} echo 'Dry run: mv {}.txt {}.md'
 ls -1 | awk -F "." '{ if ($2 == "txt") print $1 }' | xargs -I {} mv {}.txt {}.md
 ls -1 | grep .txt | cut -d. -f1 | xargs -I {} echo 'Dry run: mv {}.txt {}.md'
@@ -300,3 +308,200 @@ kill -SIGKILL <PID>
 kill -SIGINT <PID>  # same as ctrl+c
 kill -SIGSTOP <PID> # same as ctrl+z
 kill -SIGCONT <PID> # same as bg <job-num>
+
+# vim
+
+ls # show buffers
+help
+help vimrc-intro
+help user-manual
+vert help
+!
+!ls
+e <file>
+r filename
+r !<command>
+r !pwd
+w
+w filename
+wa
+<visual-mode> w filename
+clo
+q
+q!
+qa
+Ex
+@:
+noh
+<insert mode><C-r>=system('ls')
+echo @"
+
+## While in netrw
+d - create directory
+% - create file
+
+## Windows
+vsp
+sp
+
+## Show Commands
+:<up>
+:!<command>
+:TAB
+:C-d
+messages
+q:
+q:p # paste to command history for execution
+
+## Search
+/
+/PATTERN\c
+?PATTERN
+
+## Registers
+reg
+reg " 0 1 - : / * +
+
+### redirect value of rtp to a register
+redir @a
+echo 'hello'
+redir END
+
+## Marks
+marks
+marks '.
+
+## Substitute
+s/PATTERN/NEW_PATTERN
+s/PATTERN/NEW_PATTERN/g
+<num>,<num>s/PATTERN/NEW_PATTERN
+,<num>s/PATTERN/NEW_PATTERN
+,+<num>s/PATTERN/NEW_PATTERN
+,-<num>s/PATTERN/NEW_PATTERN
+%s/PATTERN/NEW_PATTERN
+%s/PATTERN/\1\2\3
+%s/PATTERN/NEW&PATTERN
+'<,'>s/pattern/newpattern
+
+### Add parentheses to keys in an object
+:%s/\s(\w+):/"\1"
+### Remove parentheses from JSON keys
+:%s/"\(\w*\)":/\1
+### Wrap pattern in parens
+:s/sunny/(&)/
+### Replace with newline
+:s/<char>/\r
+
+### Append to line
+:'<,'>s/$/pattern
+### Prepend to beginning of line
+:'<,'>s/^/pattern
+### Fighting one-eyed kirby
+:'<,'>s/\(.*\)/\1\1
+### Wrap words in parens
+:'<,'>s/\(\w.*\)/"\1"
+### Replace within visual range, not entire line (https://vi.stackexchange.com/a/1926/49558)
+:'<,'>s/\%VSEARCH/REPLACE/g
+
+## g command
+g/PATTERN/<cmd>
+g/PATTERN/d
+
+### Delete all empty lines
+:g/^\s*$/d
+
+## json
+:%!jq
+:%!jq -S
+:%!jq --indent 4
+
+## options
+set buftype=nofile
+set ignorecase
+set ic
+set noignorecase
+set noic
+set hlsearch
+set hls
+set nohlsearch
+set nohls
+set incsearch
+set is
+set noincsearch
+set nois
+set wrap
+set wrap!
+set nowrap
+
+### Line numbers
+set number
+set number!
+set nu
+set nu!
+set nonumber
+set nonu
+set relativenumber
+set relativenumber!
+set rnu
+set rnu!
+set norelativenumber
+set nornu
+
+# neovim
+term
+!rg <pattern> <path> --vimgrep
+source %
+so
+checkhealth
+
+TSInstall <lang>
+TSPlaygroundToggle
+Mason
+Lazy
+Lazy load <plugin>
+
+help lsp
+help lspconfig-all
+help nvim_get_keymap
+help vim.keymap.set
+help vim.lsp.buf
+
+VMDebug
+LspInfo
+LspStop
+LspStart
+
+lua x = 12
+lua vim.diagnostic.goto_next()
+lua vim.lsp.buf.rename()
+lua vim.lsp.buf.code_action()
+lua =vim.api
+lua =vim.lsp.get_active_clients()
+lua =vim.inspect({})
+lua =package.loaded
+lua =package.loaded['<module>']
+lua package.loaded['<module>'] = nil
+lua require("...")
+
+Telescope
+Telescope diagnostics
+Telescope buffers
+Telescope keymaps
+Telescope help_tags
+Telescope commands
+Telescope command_history
+Telescope grep_string search=<term>
+Telescope find_files cwd=<path>
+Telescope highlights
+Telescope file_browser
+Telescope autocommands
+
+echo mapleader
+echo maplocalleader
+echo &rtp
+nmap K
+nmap <leader>
+nmap <C-d>
+nmap N
+imap kj
+vmap kj
