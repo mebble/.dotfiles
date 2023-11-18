@@ -293,6 +293,9 @@ require('lazy').setup({
   -- { import = 'custom.plugins' },
 }, {})
 
+-- [[ Variables ]]
+local sidePaneWidth = 50
+
 -- [[ Setting options ]]
 -- See `:help vim.o`
 -- NOTE: You can change these options as you wish!
@@ -476,6 +479,8 @@ vim.api.nvim_create_autocmd('TextYankPost', {
 -- [[ Configure undotree ]]
 -- See `:help undotree.txt`
 vim.g.undotree_SetFocusWhenToggle = 1
+vim.g.undotree_WindowLayout = 4
+vim.g.undotree_SplitWidth = sidePaneWidth
 vim.keymap.set('n', '<leader>u', '<cmd>UndotreeToggle<CR>', { desc = '[U]ndo tree' })
 
 -- [[ Configure NvimTree ]]
@@ -491,6 +496,14 @@ require("nvim-tree").setup({
     enable = true,
     update_root = false,
   },
+  -- See `:help nvim-tree-opts-view`
+  view = {
+    side = "right",
+    relativenumber = true,
+    width = {
+      min = sidePaneWidth
+    }
+  }
 })
 
 vim.keymap.set('n', '<C-n>', "<cmd>NvimTreeToggle<CR>", { desc = 'Toggle nvimtree' })
