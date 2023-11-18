@@ -414,6 +414,7 @@ vim.keymap.set('n', '<C-u>', '<C-u>zz')
 -- vim.keymap.set('n', '<C-i>', '<C-i>zz')
 vim.keymap.set('n', 'N', 'Nzz')
 vim.keymap.set('n', 'n', 'nzz')
+vim.keymap.set('n', '*', '*N')
 vim.keymap.set('x', '<leader>y', '"+y', { desc = '[Y]ank to system clipboard' })
 vim.keymap.set('x', '[p', '"_dP', { desc = '[P]aste and to blackhole register #leaderless' })
 vim.keymap.set({ 'n', 'x' }, '[d', '"_d', { desc = '[D]elete to blackhole register #leaderless' })
@@ -443,7 +444,7 @@ vim.keymap.set('n', '<leader>li', '<cmd>lnewer<CR>', { desc = '[L]ocation List V
 
 -- [[ Custom Text Objects ]]
 -- https://thevaluable.dev/vim-create-text-objects/
-local chars = { '_', '.', ':', ',', ';', '|', '/', '\\', '*', '+', '%', '`', '?' }
+local chars = { '_', '.', ':', ',', ';', '|', '/', '\\', '*', '+', '%', '`', '?', '-', }
 for _, char in ipairs(chars) do
   for _, mode in ipairs({ 'x', 'o' }) do
     -- See `:help nvim_set_keymap` and `:help vim.keymap.set`
@@ -596,7 +597,7 @@ vim.keymap.set('n', '<leader>fb', require('telescope').extensions.file_browser.f
 -- See `:help nvim-treesitter`
 require('nvim-treesitter.configs').setup {
   -- Add languages to be installed here that you want installed for treesitter
-  ensure_installed = { 'c', 'cpp', 'go', 'lua', 'python', 'rust', 'tsx', 'typescript', 'javascript', 'vimdoc', 'vim', 'query', 'clojure', 'html', 'css' },
+  ensure_installed = { 'c', 'cpp', 'go', 'lua', 'python', 'rust', 'tsx', 'typescript', 'javascript', 'vimdoc', 'vim', 'query', 'clojure', 'html', 'css', 'java' },
 
   -- Autoinstall languages that are not installed. Defaults to false (but you can change for yourself!)
   auto_install = false,
@@ -784,6 +785,9 @@ require('luasnip.loaders.from_vscode').lazy_load()
 
 -- https://github.com/L3MON4D3/LuaSnip/blob/master/DOC.md#config-options
 luasnip.config.setup {}
+luasnip.add_snippets("clojure", {
+  luasnip.parser.parse_snippet("doto", "(#(doto % prn))"),
+})
 
 cmp.setup {
   window = {
