@@ -246,9 +246,14 @@ require('lazy').setup({
   {
     "christoomey/vim-tmux-navigator",
   },
+
+  -- Clojure/lisp plugins https://www.reddit.com/r/Clojure/comments/kolhpj/clojure_in_neovim/
+  'guns/vim-sexp',
+  'tpope/vim-sexp-mappings-for-regular-people',
   {
     "Olical/conjure",
   },
+
   {
     'ThePrimeagen/vim-be-good',
   },
