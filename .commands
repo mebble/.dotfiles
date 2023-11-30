@@ -410,13 +410,20 @@ g/PATTERN/d
 ### Delete all empty lines
 :g/^\s*$/d
 
-## json
-:%!jq
-:%!jq -S
-:%!jq --indent 4
+## formatting
+%!xargs  # put all lines in one line (issue: this removes quotes)
+
+### json
+%!jq
+%!jq -S
+%!jq --indent 4
+
+### clojure
+%!jet
 
 ## options
 set buftype=nofile
+set filetype=clojure
 set ignorecase
 set ic
 set noignorecase

@@ -3,7 +3,6 @@ tap "clojure/tools"
 tap "homebrew/bundle"
 tap "homebrew/cask-fonts"
 tap "homebrew/services"
-
 # Clone of cat(1) with syntax highlighting and Git integration
 brew "bat"
 # Cross-platform make
@@ -52,8 +51,9 @@ brew "wget"
 brew "zsh"
 # Native, fast starting Clojure interpreter for scripting.
 brew "borkdude/brew/babashka"
+# Transform JSON into EDN into Transit.
+brew "borkdude/brew/jet"
 # The Clojure Programming Language
 brew "clojure/tools/clojure"
-
 # Developer targeted fonts with a high number of glyphs
 cask "font-hack-nerd-font"
