@@ -512,3 +512,9 @@ nmap <C-d>
 nmap N
 imap kj
 vmap kj
+
+# file changes
+
+watchexec node app.js # alternative: entr (https://news.ycombinator.com/item?id=30740181)
+watchexec --restart node app.js
+watchexec --restart --stop-signal=SIGINT node app.js
