@@ -251,6 +251,11 @@ require('lazy').setup({
   'guns/vim-sexp',
   'tpope/vim-sexp-mappings-for-regular-people',
   {
+    'windwp/nvim-autopairs',
+    event = "InsertEnter",
+    opts = {} -- this is equalent to setup({}) function
+  },
+  {
     "Olical/conjure",
   },
 
@@ -490,6 +495,10 @@ vim.api.nvim_create_autocmd('TextYankPost', {
   pattern = '*',
 })
 
+-- [[ Configure vim-sexp ]]
+-- https://github.com/guns/vim-sexp/blob/14464d4580af43424ed8f2614d94e62bfa40bb4d/plugin/sexp.vim#L236
+-- https://github.com/guns/vim-sexp/issues/31
+vim.g.sexp_enable_insert_mode_mappings = 0
 
 -- [[ Configure harpoon ]]
 -- See `:help harpoon-getting-started`
