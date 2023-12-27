@@ -285,6 +285,13 @@ require('lazy').setup({
       require('maximize').setup(opts)
     end
   },
+  {
+    'ThePrimeagen/harpoon',
+    branch = "harpoon2",
+    dependencies = {
+      'nvim-lua/plenary.nvim',
+    },
+  },
   -- NOTE: Next Step on Your Neovim Journey: Add/Configure additional "plugins" for kickstart
   --       These are some example plugins that I've included in the kickstart repository.
   --       Uncomment any of the lines below to enable them.
@@ -424,8 +431,8 @@ vim.keymap.set('x', '<leader>y', '"+y', { desc = '[Y]ank to system clipboard' })
 vim.keymap.set('x', '[p', '"_dP', { desc = '[P]aste and to blackhole register #leaderless' })
 vim.keymap.set({ 'n', 'x' }, '[d', '"_d', { desc = '[D]elete to blackhole register #leaderless' })
 vim.keymap.set({ 'n', 'x' }, '[x', '"_x', { desc = '[X]elete to blackhole register #leaderless' })
-vim.keymap.set('n', '<leader>n', '<cmd>bnext<CR>', { desc = '[N]ext buffer' })
-vim.keymap.set('n', '<leader>p', '<cmd>bprevious<CR>', { desc = '[P]revious buffer' })
+-- vim.keymap.set('n', '<leader>n', '<cmd>bnext<CR>', { desc = '[N]ext buffer' })
+-- vim.keymap.set('n', '<leader>p', '<cmd>bprevious<CR>', { desc = '[P]revious buffer' })
 vim.keymap.set('n', '<leader>x', '<cmd>bp<bar>sp<bar>bn<bar>bd<CR>', { desc = '[X]lose buffer, keep window' })
 vim.keymap.set('n', '<leader>t', '<cmd>bdelete<CR>', { desc = 'Go back like <C-[T]>, but by closing buffer and its window' })
 vim.keymap.set('n', '<leader>o', 'o<esc>0"_D', { desc = 'o, but stay in normal mode' })
@@ -482,6 +489,26 @@ vim.api.nvim_create_autocmd('TextYankPost', {
   group = highlight_group,
   pattern = '*',
 })
+
+
+-- [[ Configure harpoon ]]
+-- See `:help harpoon-getting-started`
+local harpoon = require("harpoon")
+
+harpoon:setup()
+
+vim.keymap.set("n", "<leader>ha", function() harpoon:list():append() end, { desc = '[H]arpoon [A]dd' })
+vim.keymap.set("n", "<leader>hc", function() harpoon:list():clear() end, { desc = '[H]arpoon [C]lear' })
+vim.keymap.set("n", "<leader>hv", function() harpoon.ui:toggle_quick_menu(harpoon:list()) end, { desc = '[H]arpoon [V]iew' })
+vim.keymap.set("n", "<leader>hr", function()
+  local i = tonumber(vim.fn.input('Harpoon position: '))
+  harpoon:list():removeAt(i)
+end, { desc = '[H]arpoon [R]emove' })
+
+vim.keymap.set("n", "<leader>n", function() harpoon:list():select(1) end, { desc = 'Harpoon 1' })
+vim.keymap.set("n", "<leader>j", function() harpoon:list():select(2) end, { desc = 'Harpoon 2' })
+vim.keymap.set("n", "<leader>k", function() harpoon:list():select(3) end, { desc = 'Harpoon 3' })
+vim.keymap.set("n", "<leader>p", function() harpoon:list():select(4) end, { desc = 'Harpoon 4' })
 
 
 -- [[ Configure undotree ]]
