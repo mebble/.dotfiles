@@ -509,16 +509,11 @@ harpoon:setup()
 vim.keymap.set("n", "<leader>ha", function() harpoon:list():append() end, { desc = '[H]arpoon [A]dd' })
 vim.keymap.set("n", "<leader>hc", function() harpoon:list():clear() end, { desc = '[H]arpoon [C]lear' })
 vim.keymap.set("n", "<leader>hv", function() harpoon.ui:toggle_quick_menu(harpoon:list()) end, { desc = '[H]arpoon [V]iew' })
-vim.keymap.set("n", "<leader>hr", function()
-  local i = tonumber(vim.fn.input('Harpoon position: '))
-  harpoon:list():removeAt(i)
-end, { desc = '[H]arpoon [R]emove' })
 
 vim.keymap.set("n", "<leader>n", function() harpoon:list():select(1) end, { desc = 'Harpoon 1' })
 vim.keymap.set("n", "<leader>j", function() harpoon:list():select(2) end, { desc = 'Harpoon 2' })
 vim.keymap.set("n", "<leader>k", function() harpoon:list():select(3) end, { desc = 'Harpoon 3' })
 vim.keymap.set("n", "<leader>p", function() harpoon:list():select(4) end, { desc = 'Harpoon 4' })
-
 
 -- [[ Configure undotree ]]
 -- See `:help undotree.txt`
