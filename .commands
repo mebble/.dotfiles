@@ -4,7 +4,33 @@
 .tables
 .help
 .schema sqlite_schema
+.schema sqlite_master
 select * from sqlite_schema;
+select * from sqlite_master;
+
+# java
+
+## sdkman (https://sdkman.io/usage)
+
+sdk list java
+sdk list leiningen
+
+sdk use java 8.0.342-amzn
+sdk use java 11.0.15-tem
+sdk use java 17.0.1-tem
+sdk use java 18.0.1-tem
+
+## jar
+
+jar -c -v -f output.jar -e EntryPoint EntryPoint.class some_dir/*.class
+java -jar output.jar
+jar -t -f output.jar
+
+# clojure
+clojure -Spath -Sdeps '{:deps {org.clojure/math.combinatorics {:mvn/version "0.2.0"}}}' | tr ':' '\n'
+
+## babashka
+bb --classpath "$(clojure -Spath -Sdeps '{:deps {org.clojure/math.combinatorics {:mvn/version "0.2.0"}}}')" <script>
 
 # zip archives
 tar --list --file <zipfile>
@@ -381,27 +407,33 @@ s/PATTERN/NEW_PATTERN/g
 %s/PATTERN/NEW_PATTERN
 %s/PATTERN/\1\2\3
 %s/PATTERN/NEW&PATTERN
-'<,'>s/pattern/newpattern
+s/pattern/newpattern
 
-### Add parentheses to keys in an object
-:%s/\s(\w+):/"\1"
-### Remove parentheses from JSON keys
-:%s/"\(\w*\)":/\1
 ### Wrap pattern in parens
-:s/sunny/(&)/
+s/sunny/(&)/
 ### Replace with newline
-:s/<char>/\r
+s/<char>/\r
 
 ### Append to line
-:'<,'>s/$/pattern
+s/$/pattern
 ### Prepend to beginning of line
-:'<,'>s/^/pattern
-### Fighting one-eyed kirby
-:'<,'>s/\(.*\)/\1\1
-### Wrap words in parens
-:'<,'>s/\(\w.*\)/"\1"
+s/^/pattern
 ### Replace within visual range, not entire line (https://vi.stackexchange.com/a/1926/49558)
-:'<,'>s/\%VSEARCH/REPLACE/g
+s/\%VSEARCH/REPLACE/g
+
+### One-eyed kirby
+https://vonheikemen.github.io/devlog/tools/how-to-survive-without-multiple-cursors-in-vim/#fighting-kirby
+
+#### Repeat with hyphen
+s/\(.*\)/\1-\1
+#### Change single quote to double quote
+s/'\(.*\)'/"\1"
+#### Wrap first word in quotes
+s/\(\w*\)/"\1"
+#### Remove quotes from JSON keys
+%s/"\(.*\)":/\1:
+#### Wrap keys of js object in parentheses
+s/\(\w*\):/"\1":
 
 ## g command
 g/PATTERN/<cmd>
