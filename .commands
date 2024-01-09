@@ -32,6 +32,13 @@ clojure -Spath -Sdeps '{:deps {org.clojure/math.combinatorics {:mvn/version "0.2
 ## babashka
 bb --classpath "$(clojure -Spath -Sdeps '{:deps {org.clojure/math.combinatorics {:mvn/version "0.2.0"}}}')" <script>
 
+# Homebrew Mac
+brew services list
+brew services start grafana
+brew services start postgresql@15
+brew services info grafana
+brew services info postgresql@15
+
 # zip archives
 tar --list --file <zipfile>
 tar --extract --verbose --file <zipfile>
