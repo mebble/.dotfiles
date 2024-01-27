@@ -505,6 +505,11 @@ vim.g.sexp_enable_insert_mode_mappings = 0
 local harpoon = require("harpoon")
 
 harpoon:setup()
+harpoon:extend({
+  SELECT = function(_ctx)
+    vim.api.nvim_feedkeys('zz', 'n', true)
+  end
+})
 
 vim.keymap.set("n", "<leader>ha", function() harpoon:list():append() end, { desc = '[H]arpoon [A]dd' })
 vim.keymap.set("n", "<leader>hc", function() harpoon:list():clear() end, { desc = '[H]arpoon [C]lear' })
@@ -591,9 +596,9 @@ require('telescope').setup {
     find_files = { follow = true },
 
     -- https://github.com/nvim-telescope/telescope.nvim/issues/2368
-    lsp_definitions = { jump_type = 'vsplit' },
-    lsp_references = { jump_type = 'vsplit' },
-    lsp_implementations = { jump_type = 'vsplit' },
+    -- lsp_definitions = { jump_type = 'vsplit' },
+    -- lsp_references = { jump_type = 'vsplit' },
+    -- lsp_implementations = { jump_type = 'vsplit' },
   },
   extensions = {
     file_browser = {
