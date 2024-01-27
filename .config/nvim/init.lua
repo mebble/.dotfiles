@@ -836,7 +836,8 @@ require('luasnip.loaders.from_vscode').lazy_load()
 -- https://github.com/L3MON4D3/LuaSnip/blob/master/DOC.md#config-options
 luasnip.config.setup {}
 luasnip.add_snippets("clojure", {
-  luasnip.parser.parse_snippet("doto", "(#(doto % prn))"),
+  luasnip.parser.parse_snippet("prn-doto", "(#(doto % prn))"),
+  luasnip.parser.parse_snippet("prn-let", "_ (prn $1)"),
 })
 
 cmp.setup {
