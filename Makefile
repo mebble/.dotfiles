@@ -5,7 +5,7 @@ start:
 	@echo 'Then run `make install`'
 
 install:
-	brew bundle --file ~/.dotfiles/.config/brew/Brewfile
+	brew bundle --file ~/.dotfiles/public/homebrew/.config/brew/Brewfile
 	@echo
 	@echo 'Now run `make install-manual`'
 
@@ -35,7 +35,7 @@ install-manual:
 
 release:
 	@echo 'Releasing dotfiles'
-	stow -d ~/.dotfiles/ -t ~/ -S .
+	make stow-public
 	stow -d ~/.dotfiles/ -t ~/ -S personal
 	@echo
 	@echo 'Releasing dotfiles outside of ~/'
@@ -51,3 +51,6 @@ release:
 	defaults write -g KeyRepeat -int 5
 	# https://stackoverflow.com/questions/39606031/intellij-key-repeating-idea-vim
 	defaults write -g ApplePressAndHoldEnabled -bool false
+
+stow-public:
+	ls -1 public | xargs -I {} stow -d public -t ~/ -S {}
