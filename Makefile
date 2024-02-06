@@ -36,7 +36,7 @@ install-manual:
 release:
 	@echo 'Releasing dotfiles'
 	make stow-public
-	stow -d ~/.dotfiles/ -t ~/ -S personal
+	make stow-personal
 	@echo
 	@echo 'Releasing dotfiles outside of ~/'
 	cp -P ~/.config/grafana/grafana.ini /opt/homebrew/etc/grafana/grafana.ini
@@ -54,3 +54,6 @@ release:
 
 stow-public:
 	ls -1 public | xargs -I {} stow -d public -t ~/ -S {}
+
+stow-personal:
+	ls -1 personal | xargs -I {} stow -d personal -t ~/ -S {}
