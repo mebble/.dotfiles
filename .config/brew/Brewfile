@@ -3,6 +3,7 @@ tap "clojure/tools"
 tap "homebrew/bundle"
 tap "homebrew/cask-fonts"
 tap "homebrew/services"
+tap "mongodb/brew"
 # Clone of cat(1) with syntax highlighting and Git integration
 brew "bat"
 # Cross-platform make
@@ -59,5 +60,7 @@ brew "borkdude/brew/babashka"
 brew "borkdude/brew/jet"
 # The Clojure Programming Language
 brew "clojure/tools/clojure"
+# High-performance, schema-free, document-oriented database (https://www.mongodb.com/docs/manual/tutorial/install-mongodb-on-os-x/)
+brew "mongodb/brew/mongodb-community"
 # Developer targeted fonts with a high number of glyphs
 cask "font-hack-nerd-font"

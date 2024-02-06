@@ -8,6 +8,15 @@
 select * from sqlite_schema;
 select * from sqlite_master;
 
+## mongodb
+show dbs
+show collections
+db.<collection>.find()
+db.getMongo()
+db.adminCommand({ listDatabases: 1 })
+db.runCommand({ listCollections: 1 })
+db.runCommand({ listIndexes: "<collection>" })
+
 # java
 
 ## sdkman (https://sdkman.io/usage)
