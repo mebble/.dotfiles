@@ -5,6 +5,8 @@
 .help
 .schema sqlite_schema
 .schema sqlite_master
+.mode column
+.headers on
 select * from sqlite_schema;
 select * from sqlite_master;
 
@@ -41,6 +43,11 @@ clojure -Spath -Sdeps '{:deps {org.clojure/math.combinatorics {:mvn/version "0.2
 ## babashka
 bb --classpath "$(clojure -Spath -Sdeps '{:deps {org.clojure/math.combinatorics {:mvn/version "0.2.0"}}}')" <script>
 
+# python
+pip3 list
+python3 -m venv
+python3 -m venv env
+
 # Homebrew Mac
 brew services list
 brew services start grafana
@@ -60,6 +67,7 @@ git push origin main~1:main # push only upto parent commit
 git remote rename origin upstream
 git branch -vv
 git branch master -u origin/master # similar to --set-upstream
+git commit --amend --no-edit
 git commit --amend -m
 
 # ssh
@@ -233,6 +241,10 @@ netstat --program
 netstat --listening
 netstat --tcp --numeric
 
+## process at a port
+### mac
+lsof -i :54321
+
 ## configs
 ifconfig | grep en0 -A 5
 ifconfig | grep 'en\d' -A 5
@@ -245,6 +257,7 @@ traceroute <host>
 curl ipinfo.io
 
 # strace
+
 strace -h
 strace -y ls
 strace -p <PID>
@@ -291,21 +304,48 @@ ps -u $(whoami) # All processes running for my user account
 ps --help
 ps --help simple
 ps --help list
+ps aux # https://unix.stackexchange.com/questions/106847/what-does-aux-mean-in-ps-aux
+ps aux | fzf
 ps -au
 ps -aux
 ps -aux | grep teatime
-ps aux
 ps -ef                            # all processes, formatted
 ps -ef | { head -1; grep lein; }  # with header row included (https://stackoverflow.com/questions/12920317/include-header-in-the-grep-result)
 ps -p pid1,pid2                   # certain PIDs
+nohup [cmd]  # https://askubuntu.com/a/723048
 
 ## Show processes sorted by CPU usage
 top
 htop
 
+## proc filesystem
+ls -l /proc/self/fd
+cat /proc/self/cmdline
+ls -l /proc/[PID]/fd
+cat /proc/[PID]/cmdline
+ls -l /dev | grep std
+
 ## Based on process name
 pgrep systemd
 pgrep ssh-agent
+pgrep node
+pgrep postgres
+
+## Background & Foreground
+jobs # Show processes of the current shell only
+### Example output:
+```
+[1]+  Stopped                 ping -c 100 www.google.com
+[2]-  Done                    ping -c 100 nleeson.nl
+[3]-  Running                 sleep 900 &
+[4]-  Killed                  ping -c 100 google.com
+```
+
+ping -c 100 www.google.com & # Run a command and make it a background process
+bg <job-num> # Resume a stopped process (SIGSTOP'd) as a background process (output will be to terminal, but you won't be able to send it signal now using keyboard ctrl+c etc. Have to "kill" from separate terminal only)
+fg <job-num> # Resume a stopped process (SIGSTOP'd) as a foreground process (now you'll be able to send it signal again using keyboard ctrl+c etc)
+bg %<job-num> # zsh
+fg %<job-num> # zsh
 
 ## daemon
 systemctl list-units -t service
@@ -432,10 +472,13 @@ s/<char>/\r
 
 ### Append to line
 s/$/pattern
+s/$/,
 ### Prepend to beginning of line
 s/^/pattern
 ### Replace within visual range, not entire line (https://vi.stackexchange.com/a/1926/49558)
 s/\%VSEARCH/REPLACE/g
+### Remove trailing semicolons
+%s/;$//
 
 ### One-eyed kirby
 https://vonheikemen.github.io/devlog/tools/how-to-survive-without-multiple-cursors-in-vim/#fighting-kirby
@@ -448,12 +491,14 @@ s/'\(.*\)'/"\1"
 s/\(\w*\)/"\1"
 #### Remove quotes from JSON keys
 %s/"\(.*\)":/\1:
-#### Wrap keys of js object in parentheses
+#### Wrap keys of js object in quotes
 s/\(\w*\):/"\1":
 
 ## g command
 g/PATTERN/<cmd>
 g/PATTERN/d
+### search within selection
+:'<,'>g/PATTERN
 
 ### Delete all empty lines
 :g/^\s*$/d
@@ -566,3 +611,12 @@ vmap kj
 watchexec node app.js # alternative: entr (https://news.ycombinator.com/item?id=30740181)
 watchexec --restart node app.js
 watchexec --restart --stop-signal=SIGINT node app.js
+
+# Binary
+- [bin-dec-dex converter](https://www.rapidtables.com/convert/number/ascii-hex-bin-dec-converter.html)
+- [list of file signatures](https://en.wikipedia.org/wiki/List_of_file_signatures)
+
+hexdump -C [file]
+xxd [file]
+xxd [file] | cut -c 11-49 | tr -d ' '
+xxd -b [file]
