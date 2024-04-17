@@ -241,9 +241,6 @@ require('lazy').setup({
     build = ':TSUpdate',
   },
   {
-    'nvim-treesitter/playground'
-  },
-  {
     "christoomey/vim-tmux-navigator",
   },
 
@@ -267,6 +264,18 @@ require('lazy').setup({
   },
   {
     'nvim-tree/nvim-web-devicons'
+  },
+  {
+    'stevearc/oil.nvim',
+    opts = {
+      view_options = {
+        show_hidden = true,
+      }
+    },
+    dependencies = { "nvim-tree/nvim-web-devicons" },
+    config = function(_, opts)
+      require("oil").setup(opts)
+    end
   },
   {
     "ray-x/lsp_signature.nvim",
@@ -436,10 +445,7 @@ vim.keymap.set('x', '<leader>y', '"+y', { desc = '[Y]ank to system clipboard' })
 vim.keymap.set('x', '[p', '"_dP', { desc = '[P]aste and to blackhole register #leaderless' })
 vim.keymap.set({ 'n', 'x' }, '[d', '"_d', { desc = '[D]elete to blackhole register #leaderless' })
 vim.keymap.set({ 'n', 'x' }, '[x', '"_x', { desc = '[X]elete to blackhole register #leaderless' })
--- vim.keymap.set('n', '<leader>n', '<cmd>bnext<CR>', { desc = '[N]ext buffer' })
--- vim.keymap.set('n', '<leader>p', '<cmd>bprevious<CR>', { desc = '[P]revious buffer' })
 vim.keymap.set('n', '<leader>x', '<cmd>bp<bar>sp<bar>bn<bar>bd<CR>', { desc = '[X]lose buffer, keep window' })
-vim.keymap.set('n', '<leader>t', '<cmd>bdelete<CR>', { desc = 'Go back like <C-[T]>, but by closing buffer and its window' })
 vim.keymap.set('n', '<leader>o', 'o<esc>0"_D', { desc = 'o, but stay in normal mode' })
 vim.keymap.set('n', '<leader>O', 'O<esc>0"_D', { desc = 'O, but stay in normal mode' })
 vim.keymap.set('n', '<leader>z', function()
@@ -597,8 +603,11 @@ require('telescope').setup {
 
     -- https://github.com/nvim-telescope/telescope.nvim/issues/2368
     -- lsp_definitions = { jump_type = 'vsplit' },
-    -- lsp_references = { jump_type = 'vsplit' },
     -- lsp_implementations = { jump_type = 'vsplit' },
+
+    lsp_references = {
+      include_declaration = false
+    },
   },
   extensions = {
     file_browser = {
@@ -649,9 +658,9 @@ require('nvim-treesitter.configs').setup {
     enable = true,
     keymaps = {
       init_selection = '<c-space>',
-      node_incremental = '<c-space>',
+      node_incremental = '<c-n>',
+      node_decremental = '<c-p>',
       scope_incremental = '<c-s>',
-      node_decremental = '<M-space>',
     },
   },
   textobjects = {
