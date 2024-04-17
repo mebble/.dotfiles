@@ -24,6 +24,7 @@
         }
     ],
     "vim.useSystemClipboard": true,
+    "vim.highlightedyank.enable": true,
     "calva.prettyPrintingOptions": {
         "printEngine": "pprint",
         "enabled": true,
