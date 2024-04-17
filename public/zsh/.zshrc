@@ -118,7 +118,7 @@ uniqx() {
   awk '{ if (!h[$0]) { print $0; h[$0]=1 } }'
 }
 
-export FZF_DEFAULT_OPTS='--cycle'
+export FZF_DEFAULT_OPTS='--cycle -m --bind ctrl-a:select-all'
 
 alias ls="exa -l"
 alias la="exa -la"
@@ -132,6 +132,10 @@ alias si='fd -H -d 1 | fzf | xargs echo -n | pbcopy'                            
 # https://stackoverflow.com/a/1315213
 alias sl='alias | fzf | grep -e "='\''[^'\'']*'\''" -o --color=never | cut -c 3- | rev | cut -c 2- | rev | xargs echo -n | pbcopy' # [S]earch A[L]iases
 alias sc='cat ~/.commands | ltag | fzf | ltag --trim | pbcopy'
+
+# https://apple.stackexchange.com/a/463210
+export LANG="en_US.UTF-8"
+export LC_CTYPE="en_US.UTF-8"
 
 # Adding stuff to $PATH
 export PATH="$HOME/.local/bin:$PATH"

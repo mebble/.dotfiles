@@ -23,7 +23,10 @@ db.runCommand({ listIndexes: "<collection>" })
 
 ## sdkman (https://sdkman.io/usage)
 
+sdk list
 sdk list java
+sdk list gradle
+sdk list kotlin
 sdk list leiningen
 
 sdk use java 8.0.342-amzn
