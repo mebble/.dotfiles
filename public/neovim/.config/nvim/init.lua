@@ -562,6 +562,12 @@ vim.keymap.set('n', '<C-n>', "<cmd>NvimTreeToggle<CR>", { desc = 'Toggle nvimtre
 -- See `:help telescope` and `:help telescope.setup()`
 require('telescope').setup {
   defaults = {
+    -- See `:help telescope.defaults.cache_picker`
+    cache_picker = {
+      num_pickers = 10,
+      limit_entries = 50,
+    },
+
     -- See `:help telescope.layout`
     layout_strategy = 'horizontal',
     layout_config = {
@@ -626,9 +632,9 @@ pcall(require('telescope').load_extension, 'luasnip')
 -- See `:help telescope.builtin`
 vim.keymap.set('n', '<leader>?', require('telescope.builtin').oldfiles, { desc = '[?] Find recently opened files' })
 vim.keymap.set('n', '<leader>/', require('telescope.builtin').current_buffer_fuzzy_find, { desc = '[/] Fuzzily search in current buffer' })
-vim.keymap.set('n', '<leader>gf', require('telescope.builtin').git_files, { desc = 'Search [G]it [F]iles' })
 vim.keymap.set('n', '<leader>gc', require('telescope.builtin').git_commits, { desc = 'Search [G]it [C]ommits' })
 vim.keymap.set('n', '<leader>gs', require('telescope.builtin').git_status, { desc = 'Search [G]it [S]tatus' })
+vim.keymap.set('n', '<leader>si', require('telescope.builtin').git_files, { desc = '[S]earch g[I]t files' })
 vim.keymap.set('n', '<leader>sf', require('telescope.builtin').find_files, { desc = '[S]earch [F]iles' })
 vim.keymap.set('n', '<leader>sa', function() require('telescope.builtin').find_files({ hidden = true }) end, { desc = '[S]earch [A]ll files' })
 vim.keymap.set('n', '<leader>sb', require('telescope.builtin').buffers, { desc = '[S]earch [B]uffers' })
@@ -640,7 +646,8 @@ vim.keymap.set('n', '<leader>sd', require('telescope.builtin').diagnostics, { de
 vim.keymap.set('n', '<leader>sc', require('telescope.builtin').commands, { desc = '[S]earch [C]ommands' })
 vim.keymap.set('n', '<leader>so', require('telescope.builtin').command_history, { desc = '[S]earch [O]ld commands' })
 vim.keymap.set('n', '<leader>sr', require('telescope.builtin').resume, { desc = '[S]earch [R]esume' })
-vim.keymap.set('n', '<leader>sp', require('telescope').extensions.luasnip.luasnip, { desc = '[S]earch sni[P]pits' })
+vim.keymap.set('n', '<leader>sp', require('telescope.builtin').pickers, { desc = '[S]earch [P]ickers' })
+vim.keymap.set('n', '<leader>sn', require('telescope').extensions.luasnip.luasnip, { desc = '[S]earch s[N]ippits' })
 vim.keymap.set('n', '<leader>fb', require('telescope').extensions.file_browser.file_browser, { desc = '[F]ile [B]rowser' })
 
 -- [[ Configure Treesitter ]]
