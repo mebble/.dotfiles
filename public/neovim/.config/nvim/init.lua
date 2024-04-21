@@ -403,14 +403,11 @@ require('lazy').setup({
   -- "gc" to comment visual regions/lines
   {
     'numToStr/Comment.nvim',
-    config = function()
-      -- [[ Configure Comment.nvim ]]
-      -- See `:help comment.config`
-      require('Comment').setup({
-        toggler = { line = 'gll' }, -- #leaderless
-        opleader = { line = 'gl' }, -- #leaderless
-      })
-    end
+    -- See `:help comment.config`
+    opts = {
+      toggler = { line = 'gll' }, -- #leaderless
+      opleader = { line = 'gl' }, -- #leaderless
+    },
   },
 
   -- Fuzzy Finder (files, lsp, etc)
@@ -541,71 +538,72 @@ require('lazy').setup({
       'nvim-treesitter/nvim-treesitter-textobjects',
     },
     build = ':TSUpdate',
-    config = function()
-      -- See `:help nvim-treesitter`
-      require('nvim-treesitter.configs').setup {
-        -- Add languages to be installed here that you want installed for treesitter
-        ensure_installed = { 'c', 'cpp', 'go', 'lua', 'python', 'rust', 'tsx', 'typescript', 'javascript', 'vimdoc', 'vim', 'query', 'clojure', 'html', 'css', 'java' },
+    -- See `:help nvim-treesitter`
+    opts = {
+      -- Add languages to be installed here that you want installed for treesitter
+      ensure_installed = { 'c', 'cpp', 'go', 'lua', 'python', 'rust', 'tsx', 'typescript', 'javascript', 'vimdoc', 'vim', 'query', 'clojure', 'html', 'css', 'java' },
 
-        -- Autoinstall languages that are not installed. Defaults to false (but you can change for yourself!)
-        auto_install = false,
+      -- Autoinstall languages that are not installed. Defaults to false (but you can change for yourself!)
+      auto_install = false,
 
-        highlight = { enable = true },
-        indent = { enable = true },
-        incremental_selection = {
+      highlight = { enable = true },
+      indent = { enable = true },
+      incremental_selection = {
+        enable = true,
+        keymaps = {
+          init_selection = '<c-space>',
+          node_incremental = '<c-n>',
+          node_decremental = '<c-p>',
+          scope_incremental = '<c-s>',
+        },
+      },
+      textobjects = {
+        select = {
           enable = true,
+          lookahead = true, -- Automatically jump forward to textobj, similar to targets.vim
           keymaps = {
-            init_selection = '<c-space>',
-            node_incremental = '<c-n>',
-            node_decremental = '<c-p>',
-            scope_incremental = '<c-s>',
+            -- You can use the capture groups defined in textobjects.scm
+            ['aa'] = '@parameter.outer',
+            ['ia'] = '@parameter.inner',
+            ['af'] = '@function.outer',
+            ['if'] = '@function.inner',
+            ['ac'] = '@class.outer',
+            ['ic'] = '@class.inner',
           },
         },
-        textobjects = {
-          select = {
-            enable = true,
-            lookahead = true, -- Automatically jump forward to textobj, similar to targets.vim
-            keymaps = {
-              -- You can use the capture groups defined in textobjects.scm
-              ['aa'] = '@parameter.outer',
-              ['ia'] = '@parameter.inner',
-              ['af'] = '@function.outer',
-              ['if'] = '@function.inner',
-              ['ac'] = '@class.outer',
-              ['ic'] = '@class.inner',
-            },
+        move = {
+          enable = true,
+          set_jumps = true, -- whether to set jumps in the jumplist
+          goto_next_start = {
+            [']m'] = '@function.outer',
+            [']]'] = '@class.outer',
           },
-          move = {
-            enable = true,
-            set_jumps = true, -- whether to set jumps in the jumplist
-            goto_next_start = {
-              [']m'] = '@function.outer',
-              [']]'] = '@class.outer',
-            },
-            goto_next_end = {
-              [']M'] = '@function.outer',
-              [']['] = '@class.outer',
-            },
-            goto_previous_start = {
-              ['[m'] = '@function.outer',
-              ['[['] = '@class.outer',
-            },
-            goto_previous_end = {
-              ['[M'] = '@function.outer',
-              ['[]'] = '@class.outer',
-            },
+          goto_next_end = {
+            [']M'] = '@function.outer',
+            [']['] = '@class.outer',
           },
-          swap = {
-            enable = true,
-            swap_next = {
-              ['<leader>a'] = '@parameter.inner',
-            },
-            swap_previous = {
-              ['<leader>A'] = '@parameter.inner',
-            },
+          goto_previous_start = {
+            ['[m'] = '@function.outer',
+            ['[['] = '@class.outer',
+          },
+          goto_previous_end = {
+            ['[M'] = '@function.outer',
+            ['[]'] = '@class.outer',
           },
         },
-      }
+        swap = {
+          enable = true,
+          swap_next = {
+            ['<leader>a'] = '@parameter.inner',
+          },
+          swap_previous = {
+            ['<leader>A'] = '@parameter.inner',
+          },
+        },
+      },
+    },
+    config = function(_, opts)
+      require('nvim-treesitter.configs').setup(opts)
     end
   },
   {
@@ -636,28 +634,29 @@ require('lazy').setup({
   },
   {
     'nvim-tree/nvim-tree.lua',
-    config = function()
+    opts = {
+      -- See `:help nvim-tree-opts-update-focused-file`
+      update_focused_file = {
+        enable = true,
+        update_root = false,
+      },
+      -- See `:help nvim-tree-opts-view`
+      view = {
+        side = "right",
+        relativenumber = true,
+        width = {
+          min = sidePaneWidth
+        }
+      }
+    },
+    config = function(_, opts)
       -- See `:help nvim-tree-setup`
 
       -- disable netrw at the very start of your init.lua
       vim.g.loaded_netrw = 1
       vim.g.loaded_netrwPlugin = 1
 
-      require("nvim-tree").setup({
-        -- See `:help nvim-tree-opts-update-focused-file`
-        update_focused_file = {
-          enable = true,
-          update_root = false,
-        },
-        -- See `:help nvim-tree-opts-view`
-        view = {
-          side = "right",
-          relativenumber = true,
-          width = {
-            min = sidePaneWidth
-          }
-        }
-      })
+      require("nvim-tree").setup(opts)
 
       vim.keymap.set('n', '<C-n>', "<cmd>NvimTreeToggle<CR>", { desc = 'Toggle nvimtree' })
     end
