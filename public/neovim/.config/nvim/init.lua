@@ -133,9 +133,9 @@ require('lazy').setup({
         nmap('<leader>ca', vim.lsp.buf.code_action, '[C]ode [A]ction')
 
         nmap('gd', require('telescope.builtin').lsp_definitions, '[G]oto [D]efinition #leaderless')
+        nmap('gD', vim.lsp.buf.type_definition, '[G]oto Type [D]efinition #leaderless')
         nmap('gr', require('telescope.builtin').lsp_references, '[G]oto [R]eferences #leaderless')
         nmap('gI', require('telescope.builtin').lsp_implementations, '[G]oto [I]mplementation #leaderless')
-        nmap('<leader>D', vim.lsp.buf.type_definition, 'Type [D]efinition')
         nmap('<leader>ds', require('telescope.builtin').lsp_document_symbols, '[D]ocument [S]ymbols')
         nmap('<leader>ws', require('telescope.builtin').lsp_dynamic_workspace_symbols, '[W]orkspace [S]ymbols')
 
@@ -144,7 +144,7 @@ require('lazy').setup({
         nmap('gs', vim.lsp.buf.signature_help, '[G]oto [S]ignature Documentation #leaderless')
 
         -- Lesser used LSP functionality
-        nmap('gD', vim.lsp.buf.declaration, '[G]oto [D]eclaration #leaderless')
+        nmap('<leader>D', vim.lsp.buf.declaration, '[G]oto [D]eclaration')
         nmap('<leader>wa', vim.lsp.buf.add_workspace_folder, '[W]orkspace [A]dd Folder')
         nmap('<leader>wr', vim.lsp.buf.remove_workspace_folder, '[W]orkspace [R]emove Folder')
         nmap('<leader>wl', function()
@@ -500,6 +500,7 @@ require('lazy').setup({
       vim.keymap.set('n', '<leader>?', require('telescope.builtin').oldfiles, { desc = '[?] Find recently opened files' })
       vim.keymap.set('n', '<leader>/', require('telescope.builtin').current_buffer_fuzzy_find, { desc = '[/] Fuzzily search in current buffer' })
       vim.keymap.set('n', '<leader>gc', require('telescope.builtin').git_commits, { desc = 'Search [G]it [C]ommits' })
+      vim.keymap.set('n', '<leader>gb', require('telescope.builtin').git_branches, { desc = 'Search [G]it [B]ranches' })
       vim.keymap.set('n', '<leader>gs', require('telescope.builtin').git_status, { desc = 'Search [G]it [S]tatus' })
       vim.keymap.set('n', '<leader>si', require('telescope.builtin').git_files, { desc = '[S]earch g[I]t files' })
       vim.keymap.set('n', '<leader>sf', require('telescope.builtin').find_files, { desc = '[S]earch [F]iles' })
