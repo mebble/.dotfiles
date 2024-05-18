@@ -5,16 +5,16 @@ start:
 	@echo 'Then run `make install`'
 
 install:
-	brew bundle --file ~/.dotfiles/public/homebrew/.config/brew/Brewfile
+	brew bundle --file ./public/homebrew/.config/brew/Brewfile
 	@echo
 	@echo 'Now run `make install-manual`'
 
 install-manual:
 	@echo 'Install other programs through curl script'
+	@echo 'https://ohmyz.sh/'
 	@echo 'https://github.com/nvm-sh/nvm'
 	@echo 'https://deno.com/'
 	@echo 'https://sdkman.io/'
-	@echo 'https://ohmyz.sh/'
 	@echo
 	@echo 'Install oh-my-zsh stuff'
 	@echo 'https://github.com/romkatv/powerlevel10k#oh-my-zsh'
