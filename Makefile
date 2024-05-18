@@ -53,7 +53,7 @@ release:
 	defaults write -g ApplePressAndHoldEnabled -bool false
 
 stow-public:
-	ls -1 public | xargs -I {} stow -d public -t ~/ -S {}
+	ls -1 public | xargs -I {} stow --no-folding -d public -t ~/ -S {}
 
 stow-personal:
-	ls -1 personal | xargs -I {} stow -d personal -t ~/ -S {}
+	ls -1 personal | xargs -I {} stow --no-folding -d personal -t ~/ -S {}
