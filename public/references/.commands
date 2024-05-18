@@ -1,3 +1,6 @@
+# commands
+compgen -c | grep 'python'
+
 # database # db
 
 ## sqlite
@@ -18,6 +21,11 @@ db.getMongo()
 db.adminCommand({ listDatabases: 1 })
 db.runCommand({ listCollections: 1 })
 db.runCommand({ listIndexes: "<collection>" })
+
+## mysql
+show databases;
+show tables;
+use <db>;
 
 # java
 
@@ -57,6 +65,9 @@ brew services start grafana
 brew services start postgresql@15
 brew services info grafana
 brew services info postgresql@15
+brew tap
+brew tap <tap>
+brew untap <tap>
 
 # zip archives
 tar --list --file <zipfile>
@@ -72,6 +83,7 @@ git branch -vv
 git branch master -u origin/master # similar to --set-upstream
 git commit --amend --no-edit
 git commit --amend -m
+git config --global push.default current
 
 # ssh
 ## list keys added to ssh agent
