@@ -11,7 +11,9 @@ make start
 Iterm2 profile
 
 - We'll have to manually load the config file into Iterm.
-- Also set Preferences -> Appearance -> General -> Theme = Compact or Minimal
+- Set Preferences -> Appearance -> General -> Theme = Compact or Minimal
+- Set Preferences -> Appearance -> Windows -> Hide scrollbars = True
+- Set Preferences -> General -> Selection -> Applications in terminal may access clipboard = True
 - See https://apple.stackexchange.com/a/293988
 
 ## Onboard
