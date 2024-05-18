@@ -1,5 +1,6 @@
 {
     "workbench.colorTheme": "GitHub Blue",
+    // "workbench.sideBar.location": "right",
     "files.insertFinalNewline": true,
     "files.trimFinalNewlines": true,
     "files.trimTrailingWhitespace": true,
@@ -17,14 +18,8 @@
     "git.openRepositoryInParentFolders": "never",
     "svelte.enable-ts-plugin": true,
     "vim.smartRelativeLine": true,
-    "vim.insertModeKeyBindings": [
-        {
-            "before": ["k", "j"],
-            "after": ["<esc>"]
-        }
-    ],
-    "vim.useSystemClipboard": true,
     "vim.highlightedyank.enable": true,
+    "vim.useSystemClipboard": true,
     "calva.prettyPrintingOptions": {
         "printEngine": "pprint",
         "enabled": true,
