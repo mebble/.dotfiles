@@ -183,6 +183,7 @@ require('lazy').setup({
         clojure_lsp = {},
         -- rust_analyzer = {},
         tsserver = {},
+        terraformls = {},
         denols = {
           autostart = false
         },
@@ -227,7 +228,7 @@ require('lazy').setup({
             on_attach = on_attach,
             settings = servers[server_name],
             filetypes = (servers[server_name] or {}).filetypes,
-            autostart = servers[server_name].autostart,
+            -- autostart = servers[server_name].autostart,
             handlers = handlers,
           }
         end
@@ -433,6 +434,13 @@ require('lazy').setup({
       -- See `:help telescope` and `:help telescope.setup()`
       require('telescope').setup {
         defaults = {
+          -- Three things we might wanna ignore:
+          --   - The .git/ folder (we don't wanna ignore .git* like .github)
+          --   - The files/dirs listed in .gitignore. These seems to be ignored by all pickers' underlying tools (fzf, rg) even when we include hidden files
+          --   - The files/dirs starting with dot (aka hidden). These seem to be ignored by default, and to be configured per picker.
+          -- We want to include hidden files/dirs (check the pickers config below), but we still wanna ignore .git/ (a hidden dir)
+          file_ignore_patterns = {".git/"},
+
           -- See `:help telescope.defaults.cache_picker`
           cache_picker = {
             num_pickers = 10,
@@ -476,8 +484,16 @@ require('lazy').setup({
           },
         },
         pickers = {
+          -- https://github.com/nvim-telescope/telescope.nvim/issues/855
+          live_grep = {
+            additional_args = {"--hidden"}
+          },
+          grep_string = {
+            additional_args = {"--hidden"}
+          },
           find_files = {
-            follow = true
+            follow = true,
+            hidden = true,
           },
           lsp_references = {
             include_declaration = false
@@ -504,7 +520,6 @@ require('lazy').setup({
       vim.keymap.set('n', '<leader>gs', require('telescope.builtin').git_status, { desc = 'Search [G]it [S]tatus' })
       vim.keymap.set('n', '<leader>si', require('telescope.builtin').git_files, { desc = '[S]earch g[I]t files' })
       vim.keymap.set('n', '<leader>sf', require('telescope.builtin').find_files, { desc = '[S]earch [F]iles' })
-      vim.keymap.set('n', '<leader>sa', function() require('telescope.builtin').find_files({ hidden = true }) end, { desc = '[S]earch [A]ll files' })
       vim.keymap.set('n', '<leader>sb', require('telescope.builtin').buffers, { desc = '[S]earch [B]uffers' })
       vim.keymap.set('n', '<leader>sk', require('telescope.builtin').keymaps, { desc = '[S]earch [K]eymaps' })
       vim.keymap.set('n', '<leader>sh', require('telescope.builtin').help_tags, { desc = '[S]earch [H]elp' })
