@@ -26,8 +26,9 @@ Brewfile
 
 ```sh
 pushd ~/.config/brew/
-rm Brewfile
-brew bundle dump --describe
+brew bundle dump --describe --file=Brewfile.temp
+cat Brewfile.temp > Brewfile
+rm Brewfile.temp
 popd
 ```
 
