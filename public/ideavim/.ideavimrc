@@ -2,6 +2,7 @@
 " https://www.youtube.com/watch?v=pTVLA62CNqg&t=283s
 set number relativenumber
 set idearefactormode=keep
+set clipboard+=unnamed
 
 let mapleader = " "
 
