@@ -486,6 +486,10 @@ require('lazy').setup({
                 require("nvim-tree.actions.node.open-file").fn('edit', path)
               end
             },
+            n = {
+              ["<C-n>"] = require('telescope.actions').move_selection_next,
+              ["<C-p>"] = require('telescope.actions').move_selection_previous,
+            },
           },
         },
         pickers = {
@@ -543,9 +547,8 @@ require('lazy').setup({
       vim.keymap.set('n', '<leader>sp', require('telescope.builtin').pickers, { desc = '[S]earch [P]ickers' })
       vim.keymap.set('n', '<leader>df', require('telescope.builtin').treesitter, { desc = '[D]ocument [F]ymbols (treesitter)' })
       vim.keymap.set('n', '<leader>sn', require('telescope').extensions.luasnip.luasnip, { desc = '[S]earch s[N]ippits' })
-      vim.keymap.set('n', '<leader>fb', require('telescope').extensions.file_browser.file_browser, { desc = '[F]ile [B]rowser' })
+      vim.keymap.set('n', '<leader>fb', "<cmd>Telescope file_browser path=%:p:h select_buffer=true<CR>", { desc = '[F]ile [B]rowser' })
       vim.keymap.set('n', '<leader>di', require('telescope').extensions.aerial.aerial, { desc = '[D]ocument Aer[I]al' })
-
 
       -- Enable telescope fzf native, if installed
       pcall(require('telescope').load_extension, 'fzf')
@@ -906,8 +909,8 @@ vim.keymap.set('n', '<C-d>', '<C-d>zz')
 vim.keymap.set('n', '<C-u>', '<C-u>zz')
 -- vim.keymap.set('n', '<C-o>', '<C-o>zz')
 -- vim.keymap.set('n', '<C-i>', '<C-i>zz')
-vim.keymap.set('n', 'N', 'Nzz')
-vim.keymap.set('n', 'n', 'nzz')
+-- vim.keymap.set('n', 'N', 'Nzz')
+-- vim.keymap.set('n', 'n', 'nzz')
 vim.keymap.set('n', '*', '*N')
 vim.keymap.set('x', '<leader>y', '"+y', { desc = '[Y]ank to system clipboard' })
 vim.keymap.set('x', '[p', '"_dP', { desc = '[P]aste and to blackhole register #leaderless' })
