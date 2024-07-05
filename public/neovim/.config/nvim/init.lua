@@ -381,7 +381,9 @@ require('lazy').setup({
           function()
             return vim.t.maximized and '   ' or ''
           end,
-          'encoding',
+          {
+            "aerial",
+          },
           'filetype',
         },
       },
@@ -515,6 +517,9 @@ require('lazy').setup({
           frecency = {
             auto_validate = false,
           },
+          aerial = {
+            show_nesting = true,
+          },
         },
       }
 
@@ -539,12 +544,15 @@ require('lazy').setup({
       vim.keymap.set('n', '<leader>df', require('telescope.builtin').treesitter, { desc = '[D]ocument [F]ymbols (treesitter)' })
       vim.keymap.set('n', '<leader>sn', require('telescope').extensions.luasnip.luasnip, { desc = '[S]earch s[N]ippits' })
       vim.keymap.set('n', '<leader>fb', require('telescope').extensions.file_browser.file_browser, { desc = '[F]ile [B]rowser' })
+      vim.keymap.set('n', '<leader>di', require('telescope').extensions.aerial.aerial, { desc = '[D]ocument Aer[I]al' })
+
 
       -- Enable telescope fzf native, if installed
       pcall(require('telescope').load_extension, 'fzf')
       pcall(require('telescope').load_extension, 'luasnip')
       pcall(require('telescope').load_extension, 'file_browser')
       pcall(require('telescope').load_extension, "frecency")
+      pcall(require('telescope').load_extension, "aerial")
     end
   },
   {
@@ -756,6 +764,22 @@ require('lazy').setup({
       vim.keymap.set("n", "<leader>p", function() harpoon:list():select(4) end, { desc = 'Harpoon 4' })
     end
   },
+  {
+    'stevearc/aerial.nvim',
+    opts = {},
+    -- Optional dependencies
+    dependencies = {
+      "nvim-treesitter/nvim-treesitter",
+      "nvim-tree/nvim-web-devicons"
+    },
+    config = function()
+      require("aerial").setup({
+        manage_folds = true,
+        link_tree_to_folds = true,
+      })
+      vim.keymap.set('n', '<leader>i', "<cmd>AerialToggle<CR>", { desc = 'Aer[I]al Toggle' })
+    end
+  }
   -- NOTE: Next Step on Your Neovim Journey: Add/Configure additional "plugins" for kickstart
   --       These are some example plugins that I've included in the kickstart repository.
   --       Uncomment any of the lines below to enable them.
