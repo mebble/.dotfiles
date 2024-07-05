@@ -429,6 +429,9 @@ require('lazy').setup({
           return vim.fn.executable 'make' == 1
         end,
       },
+      {
+        "nvim-telescope/telescope-frecency.nvim",
+      },
     },
     config = function ()
       -- See `:help telescope` and `:help telescope.setup()`
@@ -508,12 +511,15 @@ require('lazy').setup({
             -- https://github.com/nvim-telescope/telescope-file-browser.nvim/issues/300
             hidden = true,
             follow_symlinks = true,
-          }
+          },
+          frecency = {
+            auto_validate = false,
+          },
         },
       }
 
       -- See `:help telescope.builtin`
-      vim.keymap.set('n', '<leader>?', require('telescope.builtin').oldfiles, { desc = '[?] Find recently opened files' })
+      vim.keymap.set('n', '<leader>?', require('telescope').extensions.frecency.frecency, { desc = '[?] Find recently opened files' })
       vim.keymap.set('n', '<leader>/', require('telescope.builtin').current_buffer_fuzzy_find, { desc = '[/] Fuzzily search in current buffer' })
       vim.keymap.set('n', '<leader>gc', require('telescope.builtin').git_commits, { desc = 'Search [G]it [C]ommits' })
       vim.keymap.set('n', '<leader>gb', require('telescope.builtin').git_branches, { desc = 'Search [G]it [B]ranches' })
@@ -538,6 +544,7 @@ require('lazy').setup({
       pcall(require('telescope').load_extension, 'fzf')
       pcall(require('telescope').load_extension, 'luasnip')
       pcall(require('telescope').load_extension, 'file_browser')
+      pcall(require('telescope').load_extension, "frecency")
     end
   },
   {
