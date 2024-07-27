@@ -434,8 +434,16 @@ require('lazy').setup({
       {
         "nvim-telescope/telescope-frecency.nvim",
       },
+      {
+        "nvim-telescope/telescope-live-grep-args.nvim" ,
+        -- This will not install any breaking changes.
+        -- For major updates, this must be adjusted manually.
+        version = "^1.0.0",
+      },
     },
     config = function ()
+      local live_grep_args_postfix = " -F "
+
       -- See `:help telescope` and `:help telescope.setup()`
       require('telescope').setup {
         defaults = {
@@ -471,6 +479,7 @@ require('lazy').setup({
               ["<M-e>"] = require('telescope.actions').send_selected_to_loclist + require('telescope.actions').open_loclist,
               ['<C-v>'] = require('telescope.actions').select_vertical,
               ['<C-s>'] = require('telescope.actions').select_horizontal,
+              ['<C-f>'] = require('telescope.actions').to_fuzzy_refine,
 
               -- https://github.com/nvim-telescope/telescope.nvim/blob/master/developers.md
               -- https://www.reddit.com/r/neovim/comments/tnj64d/question_telescope_opening_files_with_the_ability/
@@ -524,8 +533,29 @@ require('lazy').setup({
           aerial = {
             show_nesting = true,
           },
+          live_grep_args = {
+            mappings = {
+              i = {
+                ["<C-k>"] = require("telescope-live-grep-args.actions").quote_prompt({ postfix = live_grep_args_postfix }),
+              },
+            },
+            -- temporary, until live_grep_args supports something like additional_args (https://github.com/nvim-telescope/telescope-live-grep-args.nvim/pull/86). Then we can pass additional_args = {"--hidden"}
+            vimgrep_arguments = { "rg", "--color=never", "--no-heading", "--with-filename", "--line-number", "--column", "--smart-case", "--hidden" },
+          }
         },
       }
+
+      -- From https://github.com/nvim-telescope/telescope-live-grep-args.nvim/blob/8ad632f793fd437865f99af5684f78300dac93fb/lua/telescope-live-grep-args/shortcuts.lua#L8
+      local function get_visual()
+        local _, ls, cs = unpack(vim.fn.getpos("v"))
+        local _, le, ce = unpack(vim.fn.getpos("."))
+
+        -- nvim_buf_get_text requires start and end args be in correct order
+        ls, le = math.min(ls, le), math.max(ls, le)
+        cs, ce = math.min(cs, ce), math.max(cs, ce)
+
+        return vim.api.nvim_buf_get_text(0, ls - 1, cs - 1, le - 1, ce, {})
+      end
 
       -- See `:help telescope.builtin`
       vim.keymap.set('n', '<leader>?', require('telescope').extensions.frecency.frecency, { desc = '[?] Find recently opened files' })
@@ -539,7 +569,9 @@ require('lazy').setup({
       vim.keymap.set('n', '<leader>sk', require('telescope.builtin').keymaps, { desc = '[S]earch [K]eymaps' })
       vim.keymap.set('n', '<leader>sh', require('telescope.builtin').help_tags, { desc = '[S]earch [H]elp' })
       vim.keymap.set('n', '<leader>sw', require('telescope.builtin').grep_string, { desc = '[S]earch current [W]ord' })
-      vim.keymap.set('n', '<leader>sg', require('telescope.builtin').live_grep, { desc = '[S]earch by [G]rep' })
+      vim.keymap.set('x', '<leader>sw', function() require('telescope.builtin').grep_string({ search = get_visual()[1] or "" }) end, { desc = '[S]earch current [W]ord' })
+      vim.keymap.set('n', "<leader>sg", require('telescope').extensions.live_grep_args.live_grep_args, { desc = '[S]earch by [G]rep' }) -- replaces require('telescope.builtin').live_grep
+      vim.keymap.set('x', "<leader>sg", function() require('telescope-live-grep-args.shortcuts').grep_visual_selection({ postfix = live_grep_args_postfix }) end, { desc = '[S]earch by [G]rep' })
       vim.keymap.set('n', '<leader>sd', require('telescope.builtin').diagnostics, { desc = '[S]earch [D]iagnostics' })
       vim.keymap.set('n', '<leader>sc', require('telescope.builtin').commands, { desc = '[S]earch [C]ommands' })
       vim.keymap.set('n', '<leader>so', require('telescope.builtin').command_history, { desc = '[S]earch [O]ld commands' })
@@ -556,6 +588,7 @@ require('lazy').setup({
       pcall(require('telescope').load_extension, 'file_browser')
       pcall(require('telescope').load_extension, "frecency")
       pcall(require('telescope').load_extension, "aerial")
+      pcall(require('telescope').load_extension, "live_grep_args")
     end
   },
   {
