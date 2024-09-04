@@ -182,11 +182,17 @@ require('lazy').setup({
         pyright = {},
         clojure_lsp = {},
         -- rust_analyzer = {},
-        tsserver = {},
-        terraformls = {},
+
+        -- https://docs.deno.com/runtime/getting_started/setup_your_environment/#neovim-0.6%2B-using-the-built-in-language-server
         denols = {
-          autostart = false
+          root_dir = require("lspconfig").util.root_pattern("deno.json", "deno.jsonc"),
         },
+        tsserver = {
+          root_dir = require("lspconfig").util.root_pattern("package.json"),
+          single_file_support = false,
+        },
+
+        terraformls = {},
         html = { filetypes = { 'html', 'twig', 'hbs'} },
 
         lua_ls = {
@@ -215,20 +221,25 @@ require('lazy').setup({
       }
 
       -- Ensure the servers above are installed
+      local mason = require('mason')
       local mason_lspconfig = require 'mason-lspconfig'
 
+      mason.setup()
       mason_lspconfig.setup {
         ensure_installed = vim.tbl_keys(servers),
       }
 
+      -- https://neovim.discourse.group/t/cannot-serialize-function-type-not-supported/4542/3
       mason_lspconfig.setup_handlers {
         function(server_name)
           require('lspconfig')[server_name].setup {
             capabilities = capabilities,
             on_attach = on_attach,
-            settings = servers[server_name],
+            autostart = (servers[server_name] or {}).autostart,
+            root_dir = (servers[server_name] or {}).root_dir,
+            settings = (servers[server_name] or {}).settings,
             filetypes = (servers[server_name] or {}).filetypes,
-            -- autostart = servers[server_name].autostart,
+            single_file_support = (servers[server_name] or {}).single_file_support,
             handlers = handlers,
           }
         end
