@@ -466,6 +466,13 @@ require('lazy').setup({
           -- We want to include hidden files/dirs (check the pickers config below), but we still wanna ignore .git/ (a hidden dir)
           file_ignore_patterns = {".git/"},
 
+          -- https://github.com/nvim-telescope/telescope.nvim/issues/2014#issuecomment-1166467071
+          -- Format path as "file.txt (path\to\file\)"
+          path_display = function(opts, path)
+            local tail = require("telescope.utils").path_tail(path)
+            return string.format("%s (%s)", tail, path), { { { 1, #tail }, "Constant" } }
+          end,
+
           -- See `:help telescope.defaults.cache_picker`
           cache_picker = {
             num_pickers = 10,
