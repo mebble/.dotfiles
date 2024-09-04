@@ -777,12 +777,7 @@ require('lazy').setup({
   },
   {
     'declancm/maximize.nvim',
-    opts = {
-      default_keymaps = false,
-    },
-    config = function(_, opts)
-      require('maximize').setup(opts)
-    end
+    config = true
   },
   {
     'ThePrimeagen/harpoon',
