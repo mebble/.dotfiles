@@ -182,6 +182,7 @@ require('lazy').setup({
         pyright = {},
         clojure_lsp = {},
         -- rust_analyzer = {},
+        astro = {},
 
         -- https://docs.deno.com/runtime/getting_started/setup_your_environment/#neovim-0.6%2B-using-the-built-in-language-server
         denols = {
@@ -619,7 +620,7 @@ require('lazy').setup({
     -- See `:help nvim-treesitter`
     opts = {
       -- Add languages to be installed here that you want installed for treesitter
-      ensure_installed = { 'c', 'cpp', 'go', 'lua', 'python', 'rust', 'tsx', 'typescript', 'javascript', 'vimdoc', 'vim', 'query', 'clojure', 'html', 'css', 'java', 'yaml', 'terraform' },
+      ensure_installed = { 'c', 'cpp', 'go', 'lua', 'python', 'rust', 'tsx', 'typescript', 'javascript', 'vimdoc', 'vim', 'query', 'clojure', 'html', 'css', 'java', 'yaml', 'terraform', 'astro' },
 
       -- Autoinstall languages that are not installed. Defaults to false (but you can change for yourself!)
       auto_install = false,
