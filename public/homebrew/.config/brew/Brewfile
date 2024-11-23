@@ -64,3 +64,5 @@ brew "clojure/tools/clojure"
 brew "mongodb/brew/mongodb-community"
 # Developer targeted fonts with a high number of glyphs
 cask "font-hack-nerd-font"
+# Control your tools with a few keystrokes
+cask "raycast"
