@@ -840,6 +840,22 @@ require('lazy').setup({
       })
       vim.keymap.set('n', '<leader>i', "<cmd>AerialToggle<CR>", { desc = 'Aer[I]al Toggle' })
     end
+  },
+  {
+    'smoka7/hop.nvim',
+    version = "*",
+    opts = {
+      keys = 'etovxqpdygfblzhckisuran'
+    },
+    config = function (opts)
+      local hop = require('hop')
+      hop.setup(opts)
+
+      -- See `:h hop-lua-api and :h hop-config`
+      vim.keymap.set({"n", "x"}, "<leader>hw", hop.hint_words, { desc = '[H]op [W]ord' })
+      vim.keymap.set({"n", "x"}, "<leader>hp", hop.hint_patterns, { desc = '[H]op [P]attern' })
+      vim.keymap.set({"n", "x"}, "<leader>hf", function() hop.hint_words({ current_line_only = true }) end, { desc = '[H]op [F]ind' })
+    end
   }
   -- NOTE: Next Step on Your Neovim Journey: Add/Configure additional "plugins" for kickstart
   --       These are some example plugins that I've included in the kickstart repository.
