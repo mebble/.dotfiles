@@ -71,7 +71,19 @@ require('lazy').setup({
   -- NOTE: First, some plugins that don't require any configuration
 
   -- Git related plugins
-  'tpope/vim-fugitive',
+  {
+    'tpope/vim-fugitive',
+    config = function()
+      -- https://github.com/tpope/vim-fugitive/issues/1401#issuecomment-555162377
+      vim.keymap.set('n', '<leader>gb', function()
+        if vim.bo.filetype == 'fugitiveblame' then
+          vim.cmd('quit')
+        else
+          vim.cmd('Git blame')
+        end
+      end, { desc = '[G]it [B]lame' })
+    end
+  },
   'tpope/vim-rhubarb',
 
   -- Detect tabstop and shiftwidth automatically
@@ -236,12 +248,12 @@ require('lazy').setup({
           require('lspconfig')[server_name].setup {
             capabilities = capabilities,
             on_attach = on_attach,
+            handlers = handlers,
             autostart = (servers[server_name] or {}).autostart,
             root_dir = (servers[server_name] or {}).root_dir,
             settings = (servers[server_name] or {}).settings,
             filetypes = (servers[server_name] or {}).filetypes,
             single_file_support = (servers[server_name] or {}).single_file_support,
-            handlers = handlers,
           }
         end
       }
@@ -580,7 +592,6 @@ require('lazy').setup({
       vim.keymap.set('n', '<leader>?', require('telescope').extensions.frecency.frecency, { desc = '[?] Find recently opened files' })
       vim.keymap.set('n', '<leader>/', require('telescope.builtin').current_buffer_fuzzy_find, { desc = '[/] Fuzzily search in current buffer' })
       vim.keymap.set('n', '<leader>gc', require('telescope.builtin').git_commits, { desc = 'Search [G]it [C]ommits' })
-      vim.keymap.set('n', '<leader>gb', require('telescope.builtin').git_branches, { desc = 'Search [G]it [B]ranches' })
       vim.keymap.set('n', '<leader>gs', require('telescope.builtin').git_status, { desc = 'Search [G]it [S]tatus' })
       vim.keymap.set('n', '<leader>si', require('telescope.builtin').git_files, { desc = '[S]earch g[I]t files' })
       vim.keymap.set('n', '<leader>sf', require('telescope.builtin').find_files, { desc = '[S]earch [F]iles' })
