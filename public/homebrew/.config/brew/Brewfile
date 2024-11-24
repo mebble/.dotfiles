@@ -60,9 +60,9 @@ brew "borkdude/brew/babashka"
 brew "borkdude/brew/jet"
 # The Clojure Programming Language
 brew "clojure/tools/clojure"
-# High-performance, schema-free, document-oriented database (https://www.mongodb.com/docs/manual/tutorial/install-mongodb-on-os-x/)
+# High-performance, schema-free, document-oriented database
 brew "mongodb/brew/mongodb-community"
-# Developer targeted fonts with a high number of glyphs
 cask "font-hack-nerd-font"
+cask "font-jetbrains-mono-nerd-font"
 # Control your tools with a few keystrokes
 cask "raycast"
