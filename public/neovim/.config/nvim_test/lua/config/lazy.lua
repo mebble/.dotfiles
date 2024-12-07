@@ -35,7 +35,6 @@ require("lazy").setup({
 		vim.cmd.colorscheme("tokyonight")
 	    end
 	},
- 
 	{
 	    "folke/which-key.nvim",
 	    event = "VeryLazy",
@@ -52,6 +51,13 @@ require("lazy").setup({
 		    end,
 		    desc = "Buffer Local Keymaps (which-key)",
 		},
+	    },
+	},
+	{
+	    -- Set lualine as statusline
+	    'nvim-lualine/lualine.nvim',
+	    -- See `:help lualine.txt`
+	    opts = {
 	    },
 	},
 	"christoomey/vim-tmux-navigator",
