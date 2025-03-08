@@ -200,7 +200,8 @@ require('lazy').setup({
         denols = {
           root_dir = require("lspconfig").util.root_pattern("deno.json", "deno.jsonc"),
         },
-        tsserver = {
+        -- https://github.com/neovim/nvim-lspconfig/pull/3232#issuecomment-2331025714
+        ts_ls = {
           root_dir = require("lspconfig").util.root_pattern("package.json"),
           single_file_support = false,
         },
@@ -494,8 +495,7 @@ require('lazy').setup({
           -- See `:help telescope.layout`
           layout_strategy = 'horizontal',
           layout_config = {
-            prompt_position = 'top',
-            preview_width = 75,
+            horizontal = { prompt_position = 'top', preview_width = 75 },
           },
 
           -- See `:help telescope.defaults.sorting_strategy`
@@ -815,7 +815,7 @@ require('lazy').setup({
         end
       })
 
-      vim.keymap.set("n", "<leader>ha", function() harpoon:list():append() end, { desc = '[H]arpoon [A]dd' })
+      vim.keymap.set("n", "<leader>ha", function() harpoon:list():add() end, { desc = '[H]arpoon [A]dd' })
       vim.keymap.set("n", "<leader>hc", function() harpoon:list():clear() end, { desc = '[H]arpoon [C]lear' })
       vim.keymap.set("n", "<leader>hv", function() harpoon.ui:toggle_quick_menu(harpoon:list()) end, { desc = '[H]arpoon [V]iew' })
 
@@ -939,7 +939,7 @@ vim.wo.signcolumn = 'yes'
 
 -- Decrease update time
 vim.o.updatetime = 250
-vim.o.timeoutlen = 200
+vim.o.timeoutlen = 300
 
 -- Set completeopt to have a better completion experience
 vim.o.completeopt = 'menuone,noselect'
