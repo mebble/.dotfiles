@@ -23,9 +23,50 @@ db.runCommand({ listCollections: 1 })
 db.runCommand({ listIndexes: "<collection>" })
 
 ## mysql
+
+### CLI
+mysql_secure_installation
+mysql --user=root --password --host localhost --port 3306 --database <db>
+mysql -u root -p -h localhost -P 3306 -D <db>
+
+### shell
 show databases;
 show tables;
 use <db>;
+describe <table>;
+
+## postgresql
+
+### shell
+\l       # list dbs
+\c       # show current db and role
+\c <DB>  # connect to db
+\d       # list relations
+\d+
+\di      # list indexes
+\di+
+\dt      # list tables
+\dt+
+\du      # list users
+\du+
+\dT      # list user-defined types
+\dT+
+\q       # quit
+\x
+
+\d pg_indexes
+
+
+#### find tables in db
+\d information_schema.tables
+select * from information_schema.tables where table_schema = 'public' limit 10;
+
+### CLI
+realpath $(which createdb)
+realpath $(which psql)
+pg_isready
+psql -h localhost -p 5432 -U neilsyiemlieh -d postgres
+createdb <db>
 
 # java
 
@@ -60,9 +101,15 @@ python3 -m venv
 python3 -m venv env
 
 # Homebrew Mac
+brew info openssl
+brew info postgresql
+brew install postgresql@15
+brew reinstall postgresql@15
 brew services list
 brew services start grafana
+brew services start mysql
 brew services start postgresql@15
+brew services restart postgresql@15
 brew services info grafana
 brew services info postgresql@15
 brew tap
@@ -77,13 +124,42 @@ tar --create --gzip --verbose --file <zipfile> <pathtozip>
 tar -czvf <zipfile> <pathtozip>
 
 # git
+git diff --staged
 git push origin main~1:main # push only upto parent commit
 git remote rename origin upstream
+git remote prune origin # remove remote branches that no longer exist on remote
 git branch -vv
 git branch master -u origin/master # similar to --set-upstream
 git commit --amend --no-edit
 git commit --amend -m
 git config --global push.default current
+git reset --hard HEAD~1 # move current branch back by 1 commit
+git reset --soft HEAD~1 # move current branch back by 1 commit but keep changes in staging area
+git stash push --staged # stash only staged changes
+git stash push --keep-index # stash staged and unstaged changes, but keep staged changes in staging area
+git revert --no-commit <commit-hash> # revert a commit without creating a new commit, just put changes in staging area
+git revert --continue # when revert mode, continue
+git revert --abort # when revert mode, abort
+
+# debuggers
+
+## delve (go)
+
+### CLI
+dlv test . -- -test.v -test.count=1
+
+### shell
+c # continue
+s # step into function
+n # next line
+bt # show call stack
+p <var> # print variable
+
+# ssl and tls
+echo - | openssl s_client -connect example.com:443 | openssl x509 -subject -noout|more
+echo - | openssl s_client -connect example.com:443 | openssl x509 -text -noout|more
+openssl rand -hex 32
+openssl rand -base64 32
 
 # ssh
 ## list keys added to ssh agent
@@ -248,13 +324,19 @@ dig @<nameserver> example.com ns
 ## tcp udp sockets
 ### netcat
 nc -l 3000 # listen
-nc localhost 3000 # connect
+
+#### connect
+nc localhost 3000
+nc -zv <ip> 8000
+
 ### See processes and ports used
 netstat
 netstat --tcp
 netstat --program
 netstat --listening
 netstat --tcp --numeric
+netstat -tulnp
+netstat -tulnp | grep 8000
 
 ## process at a port
 ### mac
@@ -265,6 +347,9 @@ ifconfig | grep en0 -A 5
 ifconfig | grep 'en\d' -A 5
 ifconfig | grep 'utun\d' -A 5
 ifconfig | grep ipsec0 -A 5
+
+## firewall
+sudo ufw status verbose
 
 ## misc
 ping <host>
