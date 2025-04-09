@@ -17,14 +17,65 @@
     },
     "git.openRepositoryInParentFolders": "never",
     "svelte.enable-ts-plugin": true,
-    "vim.smartRelativeLine": true,
-    "vim.highlightedyank.enable": true,
-    "vim.useSystemClipboard": true,
     "calva.prettyPrintingOptions": {
         "printEngine": "pprint",
         "enabled": true,
         "width": 120,
         "maxLength": 50
     },
-    "calva.paredit.defaultKeyMap": "strict"
+    "calva.paredit.defaultKeyMap": "strict",
+
+    // Vim Config
+    // References:
+    // - https://github.com/Melkeydev/vscode_bindings/blob/main/settings.json
+    "vim.smartRelativeLine": true,
+    "vim.hlsearch": true,
+    "vim.incsearch": true,
+    "vim.highlightedyank.enable": true,
+    "vim.leader": "<Space>",
+    "vim.useSystemClipboard": true,
+    "vim.normalModeKeyBindingsNonRecursive": [
+        {
+            "before": [ "<C-h>" ],
+            "commands": [ "workbench.action.focusLeftGroup" ]
+        },
+        {
+            "before": [ "<C-j>" ],
+            "commands": [ "workbench.action.focusBelowGroup" ]
+        },
+        {
+            "before": [ "<C-k>" ],
+            "commands": [ "workbench.action.focusAboveGroup" ]
+        },
+        {
+            "before": [ "<C-l>" ],
+            "commands": [ "workbench.action.focusRightGroup" ]
+        },
+        {
+            "before": [ "leader", "f", "m" ],
+            "commands": [ "editor.action.formatDocument" ]
+        },
+        {
+            "before": ["g", "l", "l"],
+            "commands": ["editor.action.commentLine"]
+        },
+        {
+            "before": ["leader", "o"],
+            "after": ["o", "<Esc>", "0", "\"_", "D"]
+        },
+        {
+            "before": ["leader", "O"],
+            "after": ["O", "<Esc>", "0", "\"_", "D"]
+        },
+    ],
+    "vim.visualModeKeyBindings": [
+        // Stay in visual mode while indenting
+        { "before": ["<"], "commands": ["editor.action.outdentLines"] },
+        { "before": [">"], "commands": ["editor.action.indentLines"] },
+        // Move selected lines while staying in visual mode
+        { "before": ["J"], "commands": ["editor.action.moveLinesDownAction"] },
+        { "before": ["K"], "commands": ["editor.action.moveLinesUpAction"] },
+        // toggle comment selection
+        { "before": ["g", "l"], "commands": ["editor.action.commentLine"] }
+    ],
 }
