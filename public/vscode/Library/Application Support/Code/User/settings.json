@@ -67,6 +67,36 @@
             "before": ["leader", "O"],
             "after": ["O", "<Esc>", "0", "\"_", "D"]
         },
+        {
+            "before": [ "leader", "r", "n" ],
+            "commands": [ "editor.action.rename" ],
+            "when": "editorHasRenameProvider && editorTextFocus && !editorReadonly"
+        },
+        {
+            "before": [ "leader", "c", "a" ],
+            "commands": [ "editor.action.quickFix" ],
+            "when": "editorHasCodeActionsProvider && editorTextFocus && !editorReadonly"
+        },
+        {
+            "before": [ "g", "d" ],
+            "commands": [ "editor.action.revealDefinition" ]
+        },
+        {
+            "before": [ "g", "D" ],
+            "commands": [ "editor.action.goToTypeDefinition" ]
+        },
+        {
+            "before": [ "g", "r" ],
+            "commands": [ "editor.action.goToReferences" ]
+        },
+        {
+            "before": [ "g", "I" ],
+            "commands": [ "editor.action.goToImplementation" ]
+        },
+        {
+            "before": [ "K" ],
+            "commands": [ "editor.action.showHover" ]
+        }
     ],
     "vim.visualModeKeyBindings": [
         // Stay in visual mode while indenting
@@ -78,4 +108,12 @@
         // toggle comment selection
         { "before": ["g", "l"], "commands": ["editor.action.commentLine"] }
     ],
+    // disable vim's navigation implementation, because gd etc rely on vscode's native implementation
+    // seee keybindings.json for the vscode mappings
+    "vim.handleKeys": {
+        "<C-o>": false,
+        "<C-i>": false,
+        "<C-t>": false,
+    },
+    "vim.useCtrlKeys": true,
 }
