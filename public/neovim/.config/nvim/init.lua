@@ -852,9 +852,8 @@ require('lazy').setup({
       hop.setup(opts)
 
       -- See `:h hop-lua-api and :h hop-config`
-      vim.keymap.set({"n", "x"}, "<leader>hw", hop.hint_words, { desc = '[H]op [W]ord' })
-      vim.keymap.set({"n", "x"}, "<leader>hp", hop.hint_patterns, { desc = '[H]op [P]attern' })
-      vim.keymap.set({"n", "x"}, "<leader>hf", function() hop.hint_words({ current_line_only = true }) end, { desc = '[H]op [F]ind' })
+      vim.keymap.set({"n", "x"}, "zj", hop.hint_words, { desc = 'Hop Word' })
+      vim.keymap.set({"n", "x"}, "zk", function() hop.hint_words({ current_line_only = true }) end, { desc = 'Hop Find' })
     end
   }
   -- NOTE: Next Step on Your Neovim Journey: Add/Configure additional "plugins" for kickstart
