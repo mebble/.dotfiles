@@ -215,6 +215,8 @@ require('lazy').setup({
             telemetry = { enable = false },
           },
         },
+
+        tailwindcss = {},
       }
 
       -- Setup neovim lua configuration
