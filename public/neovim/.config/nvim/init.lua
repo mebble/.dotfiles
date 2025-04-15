@@ -855,6 +855,18 @@ require('lazy').setup({
       vim.keymap.set({"n", "x"}, "zj", hop.hint_words, { desc = 'Hop Word' })
       vim.keymap.set({"n", "x"}, "zk", function() hop.hint_words({ current_line_only = true }) end, { desc = 'Hop Find' })
     end
+  },
+
+  {
+    "supermaven-inc/supermaven-nvim",
+    opts = {},
+    config = function()
+      require("supermaven-nvim").setup({
+        keymaps = {
+          accept_suggestion = "<C-y>",
+        }
+      })
+    end,
   }
   -- NOTE: Next Step on Your Neovim Journey: Add/Configure additional "plugins" for kickstart
   --       These are some example plugins that I've included in the kickstart repository.
