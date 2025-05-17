@@ -43,8 +43,14 @@ P.S. You can delete this when you're done too. It's your config now :)
 vim.g.mapleader = ' '
 vim.g.maplocalleader = ','
 
--- [[ Variables ]]
+-- [[ Variables and functions ]]
 local sidePaneWidth = 50
+
+local function exit_visual_mode(callback)
+  -- Exit visual mode
+  vim.api.nvim_feedkeys(vim.api.nvim_replace_termcodes("<Esc>", true, false, true), "x", false)
+  vim.defer_fn(callback, 50) -- delay in ms
+end
 
 -- Install package manager
 --    https://github.com/folke/lazy.nvim
@@ -1028,6 +1034,30 @@ vim.keymap.set("n", "<leader>cp", function()
   local rel_path = vim.fn.fnamemodify(vim.api.nvim_buf_get_name(0), ":.")
   vim.fn.setreg("+", rel_path)  -- Copy to system clipboard
   vim.notify("Copied: " .. rel_path)
+end, { noremap = true, silent = true, desc = "[C]opy file [P]ath" })
+vim.keymap.set("v", "<leader>cp", function()
+  local bufname = vim.api.nvim_buf_get_name(0)
+  local rel_path = vim.fn.fnamemodify(bufname, ":.")
+
+  -- Get visual selection start and end lines
+  local start_line = vim.fn.line("v")
+  local end_line = vim.fn.line(".")
+
+  if start_line > end_line then
+    start_line, end_line = end_line, start_line
+  end
+
+  local line_suffix = start_line == end_line
+      and (":" .. start_line)
+      or (":" .. start_line .. "-" .. end_line)
+
+  local result = rel_path .. line_suffix
+
+  vim.fn.setreg("+", result)
+
+  exit_visual_mode(function()
+    vim.notify("Copied: " .. result)
+  end)
 end, { noremap = true, silent = true, desc = "[C]opy file [P]ath" })
 
 -- [[ Custom Text Objects ]]
