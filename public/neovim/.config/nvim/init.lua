@@ -79,6 +79,9 @@ require('lazy').setup({
   -- Git related plugins
   {
     'tpope/vim-fugitive',
+    dependencies = {
+      'tpope/vim-rhubarb',
+    },
     config = function()
       -- https://github.com/tpope/vim-fugitive/issues/1401#issuecomment-555162377
       vim.keymap.set('n', '<leader>gb', function()
@@ -88,6 +91,20 @@ require('lazy').setup({
           vim.cmd('Git blame')
         end
       end, { desc = '[G]it [B]lame' })
+
+      -- get github link (needs tpope/vim-rhubarb)
+      vim.keymap.set({ 'n', 'v' }, '<leader>gl', function()
+        local mode = vim.fn.mode()
+
+        if mode == 'v' or mode == 'V' or mode == '\22' then  -- visual, visual-line, visual-block
+          -- Exit visual mode and run GBrowse! on visual selection
+          exit_visual_mode(function()
+            vim.cmd(":'<,'>GBrowse!")
+          end)
+        else
+          vim.cmd("GBrowse!")
+        end
+      end, { desc = 'Copy [G]itHub [L]ink to clipboard' })
     end
   },
   'tpope/vim-rhubarb',
