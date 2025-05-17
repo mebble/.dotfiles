@@ -1,8 +1,13 @@
 betterthantomorrow.calva
+betterthantomorrow.calva-spritz
 bradlc.vscode-tailwindcss
+catppuccin.catppuccin-vsc
 denoland.vscode-deno
 eamodio.gitlens
-larxx.github-blue
+github.copilot
+github.copilot-chat
+ms-python.debugpy
+ms-python.python
+ms-python.vscode-pylance
 svelte.svelte-vscode
-teabyii.ayu
 vscodevim.vim
