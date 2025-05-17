@@ -96,6 +96,14 @@
         {
             "before": [ "K" ],
             "commands": [ "editor.action.showHover" ]
+        },
+        {
+            "before": [ "leader", "c", "p" ],
+            "commands": [
+                {
+                    "command": "copyRelativeFilePath"
+                }
+            ]
         }
     ],
     "vim.visualModeKeyBindings": [

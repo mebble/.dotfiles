@@ -1023,6 +1023,13 @@ vim.keymap.set('n', '<leader>lc', '<cmd>lclose<CR>', { desc = '[L]ocation List [
 vim.keymap.set('n', '<leader>lo', '<cmd>lolder<CR>', { desc = '[L]ocation List View [O]lder list' })
 vim.keymap.set('n', '<leader>li', '<cmd>lnewer<CR>', { desc = '[L]ocation List View [I]Newer list' })
 
+-- Copy current buffer's path relative to cwd
+vim.keymap.set("n", "<leader>cp", function()
+  local rel_path = vim.fn.fnamemodify(vim.api.nvim_buf_get_name(0), ":.")
+  vim.fn.setreg("+", rel_path)  -- Copy to system clipboard
+  vim.notify("Copied: " .. rel_path)
+end, { noremap = true, silent = true, desc = "[C]opy file [P]ath" })
+
 -- [[ Custom Text Objects ]]
 -- https://thevaluable.dev/vim-create-text-objects/
 local chars = { '_', '.', ':', ',', ';', '|', '/', '\\', '*', '+', '%', '`', '?', '-', }
