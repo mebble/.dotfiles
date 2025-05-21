@@ -587,7 +587,9 @@ require('lazy').setup({
             auto_validate = false,
           },
           aerial = {
-            show_nesting = true,
+            show_nesting = {
+              ["_"] = true,
+            },
           },
           live_grep_args = {
             mappings = {
