@@ -1162,7 +1162,7 @@ local function escape_key(key)
   end
 end
 
--- TODO: Object keys seem to work. But array indexes seem off. Seems to always be zero i.e. [0]
+-- Works for strict JSON, not JSON5 etc
 local function copy_json_path()
   local ft = vim.bo.filetype
   if ft ~= "json" then
@@ -1182,30 +1182,23 @@ local function copy_json_path()
   -- Traverse up until we hit a pair or array
   local path_parts = {}
   while node do
-    local type = node:type()
+    local node_type = node:type()
 
-    if type == "pair" then
+    if node_type == "pair" then
       -- Get key name
       local key_node = node:child(0)
       if key_node and key_node:type() == "string" then
-        local text = vim.treesitter.get_node_text(key_node, 0)
-        text = text:gsub('^"(.*)"$', '%1') -- remove quotes
-        table.insert(path_parts, 1, escape_key(text))
+        local key_text = vim.treesitter.get_node_text(key_node, 0)
+        key_text = key_text:gsub('^"(.*)"$', '%1') -- remove quotes
+        table.insert(path_parts, 1, escape_key(key_text))
       end
-    elseif type == "array" then
+    elseif node:parent() and node:parent():type() == "array" then
       local parent = node:parent()
-      if parent and parent:type() == "pair" then
-        -- Determine index of node within array
-        local index = 0
-        local array_node = node
-        local cursor_node = ts_utils.get_node_at_cursor()
-        for i = 0, array_node:named_child_count() - 1 do
-          if array_node:named_child(i) == cursor_node then
-            index = i
-            break
-          end
+      for i = 0, parent:named_child_count() - 1 do
+        if parent:named_child(i) == node then
+          table.insert(path_parts, 1, "[" .. i .. "]")
+          break
         end
-        table.insert(path_parts, 1, "[" .. index .. "]")
       end
     end
     node = node:parent()
