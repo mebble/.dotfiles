@@ -506,9 +506,51 @@ require('lazy').setup({
 
           -- https://github.com/nvim-telescope/telescope.nvim/issues/2014#issuecomment-1166467071
           -- Format path as "file.txt (path\to\file\)"
-          path_display = function(opts, path)
-            local tail = require("telescope.utils").path_tail(path)
-            return string.format("%s (%s)", tail, path), { { { 1, #tail }, "Constant" } }
+          -- path_display = function(opts, path)
+          --   local tail = require("telescope.utils").path_tail(path)
+          --   return string.format("%s (%s)", tail, path), { { { 1, #tail }, "Constant" } }
+          -- end,
+
+          path_display = function(_, path)
+            local utils = require("telescope.utils")
+            local sep = package.config:sub(1, 1)
+            local tail = utils.path_tail(path)
+
+            -- Split full path into parts (dirs + file)
+            local parts = vim.split(path, sep)
+            local total_parts = #parts
+
+            -- Remove and store the filename separately (tail is unreliable with full duplication cases)
+            local filename = table.remove(parts)  -- parts now contains only directory segments
+
+            -- If no directory parts, return filename only — avoid showing ()
+            if vim.tbl_isempty(parts) then
+              return filename, { { { 1, #filename }, "Constant" } }
+            end
+
+            -- Get the first 5 directories from the root
+            local top = vim.list_slice(parts, 1, math.min(5, total_parts - 1))
+
+            -- Get the last 2 directories before the file
+            -- Ensure we skip overlapping segments with 'top'
+            local bottom_start = math.max(total_parts - 3, #top + 1)
+            local bottom = vim.list_slice(parts, bottom_start, total_parts - 1)
+
+            local has_bottom = #bottom > 0
+            local bottom_overlaps_top = top[#top] == bottom[1] -- Avoid duplicating segments already shown in 'top'
+            local has_gap = total_parts - 1 > (#top + #bottom) -- Only show ellipsis if there's a hidden gap between top and bottom
+
+            local context = table.concat(top, sep)
+            if has_bottom and not bottom_overlaps_top and has_gap then
+              context = context .. sep .. "…" .. sep .. table.concat(bottom, sep)
+            elseif has_bottom and not bottom_overlaps_top then
+              context = context .. sep .. table.concat(bottom, sep)
+            end
+
+            -- Add trailing slash to clarify it's a folder path
+            context = context .. sep
+
+            return string.format("%s (%s)", filename, context), { { { 1, #filename }, "Constant" } }
           end,
 
           -- See `:help telescope.defaults.cache_picker`
@@ -627,6 +669,8 @@ require('lazy').setup({
       vim.keymap.set('n', '<leader>sh', require('telescope.builtin').help_tags, { desc = '[S]earch [H]elp' })
       vim.keymap.set('n', '<leader>sw', require('telescope.builtin').grep_string, { desc = '[S]earch current [W]ord' })
       vim.keymap.set('x', '<leader>sw', function() require('telescope.builtin').grep_string({ search = get_visual()[1] or "" }) end, { desc = '[S]earch current [W]ord' })
+      vim.keymap.set('n', '<leader>sW', function() require('telescope.builtin').grep_string({ word_match = '-w' }) end, { desc = '[S]earch current [W]ord (strict)' })
+      vim.keymap.set('x', '<leader>sW', function() require('telescope.builtin').grep_string({ search = get_visual()[1] or "", word_match = '-w' }) end, { desc = '[S]earch current [W]ord (strict)' })
       vim.keymap.set('n', "<leader>sg", require('telescope').extensions.live_grep_args.live_grep_args, { desc = '[S]earch by [G]rep' }) -- replaces require('telescope.builtin').live_grep
       vim.keymap.set('x', "<leader>sg", function() require('telescope-live-grep-args.shortcuts').grep_visual_selection({ postfix = live_grep_args_postfix }) end, { desc = '[S]earch by [G]rep' })
       vim.keymap.set('n', '<leader>sd', require('telescope.builtin').diagnostics, { desc = '[S]earch [D]iagnostics' })
@@ -665,7 +709,7 @@ require('lazy').setup({
     -- See `:help nvim-treesitter`
     opts = {
       -- Add languages to be installed here that you want installed for treesitter
-      ensure_installed = { 'c', 'cpp', 'go', 'lua', 'python', 'rust', 'tsx', 'typescript', 'javascript', 'vimdoc', 'vim', 'query', 'clojure', 'html', 'css', 'java', 'yaml', 'terraform', 'astro' },
+      ensure_installed = { 'c', 'cpp', 'go', 'lua', 'python', 'rust', 'tsx', 'typescript', 'javascript', 'vimdoc', 'vim', 'query', 'clojure', 'html', 'css', 'java', 'yaml', 'terraform', 'astro', 'json' },
 
       -- Autoinstall languages that are not installed. Defaults to false (but you can change for yourself!)
       auto_install = false,
@@ -784,6 +828,7 @@ require('lazy').setup({
       require("nvim-tree").setup(opts)
 
       vim.keymap.set('n', '<C-n>', "<cmd>NvimTreeToggle<CR>", { desc = 'Toggle nvimtree' })
+      vim.keymap.set('n', '<C-f>', "<cmd>NvimTreeFocus<CR>", { desc = 'Focus nvimtree' })
     end
   },
   {
@@ -1107,6 +1152,71 @@ vim.api.nvim_create_autocmd('TextYankPost', {
   group = highlight_group,
   pattern = '*',
 })
+
+local function escape_key(key)
+  -- If key is alphanumeric and underscore only, use dot notation
+  if key:match("^[a-zA-Z_][a-zA-Z0-9_]*$") then
+    return "." .. key
+  else
+    return "['" .. key .. "']"
+  end
+end
+
+-- TODO: Object keys seem to work. But array indexes seem off. Seems to always be zero i.e. [0]
+local function copy_json_path()
+  local ft = vim.bo.filetype
+  if ft ~= "json" then
+    -- print("Not a JSON file")
+    vim.notify("Not a JSON file", vim.log.levels.WARN)
+    return
+  end
+
+  local ts_utils = require("nvim-treesitter.ts_utils")
+
+  local node = ts_utils.get_node_at_cursor()
+  if not node then
+    vim.notify("No syntax node found at cursor", vim.log.levels.WARN)
+    return
+  end
+
+  -- Traverse up until we hit a pair or array
+  local path_parts = {}
+  while node do
+    local type = node:type()
+
+    if type == "pair" then
+      -- Get key name
+      local key_node = node:child(0)
+      if key_node and key_node:type() == "string" then
+        local text = vim.treesitter.get_node_text(key_node, 0)
+        text = text:gsub('^"(.*)"$', '%1') -- remove quotes
+        table.insert(path_parts, 1, escape_key(text))
+      end
+    elseif type == "array" then
+      local parent = node:parent()
+      if parent and parent:type() == "pair" then
+        -- Determine index of node within array
+        local index = 0
+        local array_node = node
+        local cursor_node = ts_utils.get_node_at_cursor()
+        for i = 0, array_node:named_child_count() - 1 do
+          if array_node:named_child(i) == cursor_node then
+            index = i
+            break
+          end
+        end
+        table.insert(path_parts, 1, "[" .. index .. "]")
+      end
+    end
+    node = node:parent()
+  end
+
+  local json_path = "$" .. table.concat(path_parts)
+  vim.fn.setreg("+", json_path) -- Copy to system clipboard
+  vim.notify("Copied JSON path: " .. json_path)
+end
+
+vim.keymap.set("n", "<leader>cj", copy_json_path, { desc = "[C]opy [J]son path" })
 
 -- The line beneath this is called `modeline`. See `:help modeline`
 -- vim: ts=2 sts=2 sw=2 et
