@@ -6,6 +6,19 @@
 -- be extended to other languages as well. That's why it's called
 -- kickstart.nvim and not kitchen-sink.nvim ;)
 
+local enter_launch_url = function()
+  local co = coroutine.running()
+  return coroutine.create(function()
+    vim.ui.input({ prompt = "Enter URL: ", default = "http://localhost:" }, function(url)
+      if url == nil or url == "" then
+        return
+      else
+        coroutine.resume(co, url)
+      end
+    end)
+  end)
+end
+
 return {
   -- NOTE: Yes, you can install new plugins here!
   'mfussenegger/nvim-dap',
@@ -48,7 +61,8 @@ return {
       -- You'll need to check that you have the required things installed
       -- online, please don't ask me how to install them :)
       -- Update this to ensure that you have the debuggers for the langs you want
-      ensure_installed = { 'delve' },
+      -- NOTE: js-debug-adapter may need manual installation via :MasonInstall js-debug-adapter
+      ensure_installed = { 'delve', 'js-debug-adapter' },
     }
 
     -- https://github.com/tjdevries/config.nvim/blob/master/lua/custom/plugins/dap.lua
@@ -59,7 +73,7 @@ return {
     vim.keymap.set('n', '<F4>', dap.step_out, { desc = 'Debug: Step Out' })
     vim.keymap.set('n', '<F5>', dap.step_back, { desc = 'Debug: Step Back' })
     vim.keymap.set('n', '<F8>', dap.restart, { desc = 'Debug: Restart' })
-    vim.keymap.set('n', '<F9>', function ()
+    vim.keymap.set('n', '<F9>', function()
       dap.close()
       dapui.close() -- Not sure why event_terminated and event_exited don't seem to call this, so we're calling it here
       -- https://github.com/theHamsta/nvim-dap-virtual-text/blob/fbdb48c2ed45f4a8293d0d483f7730d24467ccb6/lua/nvim-dap-virtual-text.lua#L99
@@ -97,6 +111,114 @@ return {
       },
     }
 
+    -- Install golang specific config
+    require('dap-go').setup()
+
+    -- JavaScript / TypeScript working config:
+    -- Video: https://www.youtube.com/watch?v=DVG3m7rNFKc
+    -- Config: https://github.com/StevanFreeborn/nvim-config/blob/3494bbca34d950e27745075cd922d7503f8f5769/lua/plugins/debugging.lua#L95
+
+    -- Alternative resources:
+    -- https://www.darricheng.com/posts/setting-up-nodejs-debugging-in-neovim/
+    -- https://theosteiner.de/debugging-javascript-frameworks-in-neovim
+
+    for _, adapterType in ipairs({ "node", "chrome", "msedge" }) do
+      local pwaType = "pwa-" .. adapterType
+
+      dap.adapters[pwaType] = {
+        type = "server",
+        host = "localhost",
+        port = "${port}",
+        executable = {
+          command = "node",
+          args = {
+            vim.fn.stdpath("data") .. "/mason/packages/js-debug-adapter/js-debug/src/dapDebugServer.js",
+            "${port}",
+          },
+        },
+      }
+
+      -- this allow us to handle launch.json configurations
+      -- which specify type as "node" or "chrome" or "msedge"
+      dap.adapters[adapterType] = function(cb, config)
+        local nativeAdapter = dap.adapters[pwaType]
+
+        config.type = pwaType
+
+        if type(nativeAdapter) == "function" then
+          nativeAdapter(cb, config)
+        else
+          cb(nativeAdapter)
+        end
+      end
+    end
+
+    for _, language in ipairs({ "typescript", "javascript", "typescriptreact", "javascriptreact", "vue" }) do
+      dap.configurations[language] = {
+        {
+          type = "pwa-node",
+          request = "launch",
+          name = "Launch file using Node.js (nvim-dap)",
+          program = "${file}",
+          cwd = "${workspaceFolder}",
+        },
+        -- Gotta use this for backend debugging
+        -- Run node with the --inspect flag first, then attach to the process
+        {
+          type = "pwa-node",
+          request = "attach",
+          name = "Attach to process using Node.js (nvim-dap)",
+          processId = require("dap.utils").pick_process, -- seems to work with any value entered. Weird.
+          cwd = "${workspaceFolder}",
+        },
+        -- requires ts-node to be installed globally or locally
+        {
+          type = "pwa-node",
+          request = "launch",
+          name = "Launch file using Node.js with ts-node/register (nvim-dap)",
+          program = "${file}",
+          cwd = "${workspaceFolder}",
+          runtimeArgs = { "-r", "ts-node/register" },
+        },
+        -- Gotta use this for frontend debugging
+        -- First run the dev server (no need for --inspect flag), then launch chrome to connect to the server at the specified port
+        {
+          type = "pwa-chrome",
+          request = "launch",
+          name = "Launch Chrome (nvim-dap)",
+          url = enter_launch_url,
+          webRoot = "${workspaceFolder}",
+          sourceMaps = true,
+        },
+        {
+          type = "pwa-msedge",
+          request = "launch",
+          name = "Launch Edge (nvim-dap)",
+          url = enter_launch_url,
+          webRoot = "${workspaceFolder}",
+          sourceMaps = true,
+        },
+      }
+    end
+
+    local convertArgStringToArray = function(config)
+      local c = {}
+
+      for k, v in pairs(vim.deepcopy(config)) do
+        if k == "args" and type(v) == "string" then
+          c[k] = require("dap.utils").splitstr(v)
+        else
+          c[k] = v
+        end
+      end
+
+      return c
+    end
+
+    for key, _ in pairs(dap.configurations) do
+      dap.listeners.on_config[key] = convertArgStringToArray
+    end
+
     dap.listeners.before.attach.dapui_config = function()
       dapui.open()
     end
@@ -110,17 +232,14 @@ return {
       dapui.close()
     end
 
-    -- Install golang specific config
-    require('dap-go').setup()
-
     -- Configure DAP sign colors for better visibility
     vim.fn.sign_define('DapBreakpoint', { text = '●', texthl = 'DapBreakpoint' })
     vim.fn.sign_define('DapStopped', { text = '󰳟', texthl = 'DapStopped' })
 
     -- One time the "●" breakpoint symbol would immediately get replaced by an "R" and this fixed it, weirdly that issue stopped showing up though
-    -- vim.fn.sign_define('DapBreakpointCondition', { text = '●', texthl = 'DapBreakpoint' })
-    -- vim.fn.sign_define('DapBreakpointRejected', { text = '●', texthl = 'DapBreakpoint' })
-    -- vim.fn.sign_define('DapLogPoint', { text = '●', texthl = 'DapBreakpoint' })
+    vim.fn.sign_define('DapBreakpointCondition', { text = '●', texthl = 'DapBreakpoint' })
+    vim.fn.sign_define('DapBreakpointRejected', { text = '●', texthl = 'DapBreakpoint' })
+    vim.fn.sign_define('DapLogPoint', { text = '●', texthl = 'DapBreakpoint' })
 
     -- Set highlight colors for DAP signs
     vim.api.nvim_set_hl(0, 'DapBreakpoint', { fg = '#e51400' }) -- Bright red
