@@ -504,6 +504,12 @@ require('lazy').setup({
           -- We want to include hidden files/dirs (check the pickers config below), but we still wanna ignore .git/ (a hidden dir)
           file_ignore_patterns = {".git/"},
 
+          -- See `:help telescope.defaults.cache_picker`
+          cache_picker = {
+            num_pickers = 10,
+            limit_entries = 50,
+          },
+
           -- https://github.com/nvim-telescope/telescope.nvim/issues/2014#issuecomment-1166467071
           -- Format path as "file.txt (path\to\file\)"
           -- path_display = function(opts, path)
@@ -512,9 +518,28 @@ require('lazy').setup({
           -- end,
 
           path_display = function(_, path)
-            local utils = require("telescope.utils")
             local sep = package.config:sub(1, 1)
-            local tail = utils.path_tail(path)
+
+            local MAX_PART_LEN = 20              -- Max allowed length per part
+            local MIN_TRIM_LEN = 3               -- Do not trim if part length is under this
+            local TOTAL_LEN_LIMIT = 80           -- Trigger trimming only if combined raw length > this
+            local TOP_DIR_COUNT = 5              -- Max number of directories from the root to keep
+            local BOTTOM_DIR_COUNT = 3           -- Max number of directories near file to keep
+            local LOG_FALLOFF_MULTIPLIER = 10    -- Used to stretch ratio in log-based falloff
+            local LOG_FALLOFF_BASE = 11          -- Log base for falloff compression
+            local TRIM_FILLER = "…"
+            local GAP_FILLER = "..."
+
+            -- Trims a part based on dynamic limit
+            local function trim_part_dynamic(part, dynamic_max)
+              local len = #part
+              if len <= dynamic_max or len <= MIN_TRIM_LEN then
+                return part
+              end
+              local keep = math.floor((dynamic_max - #TRIM_FILLER) / 2)
+              if keep < 1 then return TRIM_FILLER end
+              return part:sub(1, keep) .. TRIM_FILLER .. part:sub(-keep)
+            end
 
             -- Split full path into parts (dirs + file)
             local parts = vim.split(path, sep)
@@ -522,6 +547,7 @@ require('lazy').setup({
 
             -- Remove and store the filename separately (tail is unreliable with full duplication cases)
             local filename = table.remove(parts)  -- parts now contains only directory segments
+            local base_part = filename
 
             -- If no directory parts, return filename only — avoid showing ()
             if vim.tbl_isempty(parts) then
@@ -529,35 +555,52 @@ require('lazy').setup({
             end
 
             -- Get the first 5 directories from the root
-            local top = vim.list_slice(parts, 1, math.min(5, total_parts - 1))
+            local top = vim.list_slice(parts, 1, math.min(TOP_DIR_COUNT, total_parts - 1))
 
             -- Get the last 2 directories before the file
             -- Ensure we skip overlapping segments with 'top'
-            local bottom_start = math.max(total_parts - 3, #top + 1)
+            local bottom_start = math.max(total_parts - BOTTOM_DIR_COUNT, #top + 1)
             local bottom = vim.list_slice(parts, bottom_start, total_parts - 1)
 
             local has_bottom = #bottom > 0
             local bottom_overlaps_top = top[#top] == bottom[1] -- Avoid duplicating segments already shown in 'top'
             local has_gap = total_parts - 1 > (#top + #bottom) -- Only show ellipsis if there's a hidden gap between top and bottom
 
+            -- Raw length calculation (excluding formatting)
+            local raw_combined_length = 0
+            for _, part in ipairs(top) do raw_combined_length = raw_combined_length + #part end
+            for _, part in ipairs(bottom) do raw_combined_length = raw_combined_length + #part end
+            raw_combined_length = raw_combined_length + #filename + (#top + #bottom + 1) * #sep  -- Add separators
+
+            -- Trim long parts only if combined length is too large
+            if raw_combined_length > TOTAL_LEN_LIMIT then
+              -- Scale max part length proportionally (inverse function) (X-axis: raw_combined_length, Y-axis: dynamic_max)
+              -- Loosen trimming with different falloff options
+              local ratio = TOTAL_LEN_LIMIT / raw_combined_length
+              -- local dynamic_max = math.max(MIN_TRIM_LEN, math.floor(MAX_PART_LEN * ratio))                                                                        -- linear falloff
+              -- local dynamic_max = math.max(MIN_TRIM_LEN, math.floor(MAX_PART_LEN * math.sqrt(ratio)))                                                             -- sqrt falloff
+              local dynamic_max = math.max(MIN_TRIM_LEN, math.floor(MAX_PART_LEN * (math.log(1 + ratio * LOG_FALLOFF_MULTIPLIER) / math.log(LOG_FALLOFF_BASE))))     -- log falloff
+
+              for i, part in ipairs(top) do
+                top[i] = trim_part_dynamic(part, dynamic_max)
+              end
+              for i, part in ipairs(bottom) do
+                bottom[i] = trim_part_dynamic(part, dynamic_max)
+              end
+              base_part = trim_part_dynamic(base_part, dynamic_max)
+            end
+
             local context = table.concat(top, sep)
             if has_bottom and not bottom_overlaps_top and has_gap then
-              context = context .. sep .. "…" .. sep .. table.concat(bottom, sep)
+              context = context .. sep .. GAP_FILLER .. sep .. table.concat(bottom, sep)
             elseif has_bottom and not bottom_overlaps_top then
               context = context .. sep .. table.concat(bottom, sep)
             end
 
-            -- Add trailing slash to clarify it's a folder path
-            context = context .. sep
+            context = context .. sep .. base_part
 
             return string.format("%s (%s)", filename, context), { { { 1, #filename }, "Constant" } }
           end,
-
-          -- See `:help telescope.defaults.cache_picker`
-          cache_picker = {
-            num_pickers = 10,
-            limit_entries = 50,
-          },
 
           -- See `:help telescope.layout`
           layout_strategy = 'horizontal',
