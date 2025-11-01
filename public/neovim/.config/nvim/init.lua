@@ -994,7 +994,12 @@ require('lazy').setup({
     },
     config = function()
       require("obsidian").setup{
-        workspaces = {},
+        workspaces = {
+          {
+            name = "Notes",
+            path = "~/Documents/notes",
+          },
+        },
         ui = {
           -- enable = false, -- disable otherwise it conflicts with render-markdown.nvim
           checkboxes = {
