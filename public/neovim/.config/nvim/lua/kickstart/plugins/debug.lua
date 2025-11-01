@@ -61,8 +61,8 @@ return {
       -- You'll need to check that you have the required things installed
       -- online, please don't ask me how to install them :)
       -- Update this to ensure that you have the debuggers for the langs you want
-      -- NOTE: js-debug-adapter may need manual installation via :MasonInstall js-debug-adapter
-      ensure_installed = { 'delve', 'js-debug-adapter' },
+      -- See the full list at https://github.com/jay-babu/mason-nvim-dap.nvim/blob/86389a3dd687cfaa647b6f44731e492970034baa/lua/mason-nvim-dap/mappings/source.lua
+      ensure_installed = { 'delve', 'js' },
     }
 
     -- https://github.com/tjdevries/config.nvim/blob/master/lua/custom/plugins/dap.lua
