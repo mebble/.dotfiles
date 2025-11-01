@@ -820,6 +820,16 @@ require('lazy').setup({
   {
     "christoomey/vim-tmux-navigator",
   },
+  {
+    'nvim-treesitter/nvim-treesitter-context',
+    config = function()
+      require'treesitter-context'.setup{
+        enable = true, -- Enable this plugin (Can be enabled/disabled later via commands)
+        mode = 'topline',  -- Line used to calculate context. Choices: 'cursor', 'topline'
+        separator = '-',
+      }
+    end
+  },
 
   -- Clojure/lisp plugins https://www.reddit.com/r/Clojure/comments/kolhpj/clojure_in_neovim/
   {
@@ -969,6 +979,45 @@ require('lazy').setup({
       -- See `:h hop-lua-api and :h hop-config`
       vim.keymap.set({"n", "x"}, "zj", hop.hint_words, { desc = 'Hop Word' })
       vim.keymap.set({"n", "x"}, "zk", function() hop.hint_words({ current_line_only = true }) end, { desc = 'Hop Find' })
+    end
+  },
+
+  -- Markdown plugins
+  -- https://www.youtube.com/watch?v=DgKI4hZ4EEI
+  {
+    "epwalsh/obsidian.nvim",
+    version = "*",  -- recommended, use latest release instead of latest commit
+    lazy = true,
+    ft = "markdown",
+    dependencies = {
+      "nvim-lua/plenary.nvim",
+    },
+    config = function()
+      require("obsidian").setup{
+        workspaces = {},
+        ui = {
+          -- enable = false, -- disable otherwise it conflicts with render-markdown.nvim
+          checkboxes = {
+            [" "] = { char = "󰄱", hl_group = "ObsidianTodo" },
+            ["x"] = { char = "", hl_group = "ObsidianDone" },
+            ["!"] = { char = "", hl_group = "ObsidianImportant" },
+            [">"] = { char = "", hl_group = "ObsidianRightArrow" },
+            ["~"] = { char = "󰰱", hl_group = "ObsidianTilde" },
+          },
+        },
+      }
+
+      vim.keymap.set('n', '<leader>st', '<cmd>ObsidianTags<CR>', { desc = '[S]earch Obsidian [T]ags' })
+
+      -- For obsidian.nvim to render markdown
+      local obsidian_markdown_group = vim.api.nvim_create_augroup('ObsidianMarkdownGroup', { clear = true })
+      vim.api.nvim_create_autocmd('Filetype', {
+        callback = function()
+          vim.opt_local.conceallevel = 1
+        end,
+        group = obsidian_markdown_group,
+        pattern = 'markdown',
+      })
     end
   },
 
