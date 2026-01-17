@@ -93,18 +93,31 @@ require('lazy').setup({
       end, { desc = '[G]it [B]lame' })
 
       -- get github link (needs tpope/vim-rhubarb)
-      vim.keymap.set({ 'n', 'v' }, '<leader>gl', function()
+      local function gbrowse_link(branch)
         local mode = vim.fn.mode()
+
+        -- when normal mode + branch not given, resolves to current branch + file path (no commit hash)
+        -- when normal mode + branch given, resolves to commit hash of given branch + file path
+        -- when visual mode, always resolves to commit hash + file path + line range
+        local branch_arg = branch and (" " .. branch .. ":%") or ""
 
         if mode == 'v' or mode == 'V' or mode == '\22' then  -- visual, visual-line, visual-block
           -- Exit visual mode and run GBrowse! on visual selection
           exit_visual_mode(function()
-            vim.cmd(":'<,'>GBrowse!")
+            vim.cmd(":'<,'>GBrowse!" .. branch_arg)
           end)
         else
-          vim.cmd("GBrowse!")
+          vim.cmd("GBrowse!" .. branch_arg)
         end
-      end, { desc = 'Copy [G]itHub [L]ink to clipboard' })
+      end
+
+      vim.keymap.set({ 'n', 'v' }, '<leader>gl', function()
+        gbrowse_link()
+      end, { desc = 'Copy [G]itHub [l]ink to clipboard' })
+
+      vim.keymap.set({ 'n', 'v' }, '<leader>gL', function()
+        gbrowse_link("main")
+      end, { desc = 'Copy [G]itHub [L]ink to clipboard (main branch)' })
     end
   },
   'tpope/vim-rhubarb',
