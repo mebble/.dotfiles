@@ -140,6 +140,7 @@ git stash push --keep-index # stash staged and unstaged changes, but keep staged
 git revert --no-commit <commit-hash> # revert a commit without creating a new commit, just put changes in staging area
 git revert --continue # when revert mode, continue
 git revert --abort # when revert mode, abort
+git submodule update --init --recursive # initialize all submodules
 
 # debuggers
 
@@ -705,6 +706,7 @@ nmap <C-d>
 nmap N
 imap kj
 vmap kj
+verbose nmap
 
 # file changes
 
