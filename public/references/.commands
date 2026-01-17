@@ -37,7 +37,7 @@ describe <table>;
 
 ## postgresql
 
-### shell
+### psql
 \l       # list dbs
 \c       # show current db and role
 \c <DB>  # connect to db
@@ -53,6 +53,12 @@ describe <table>;
 \dT+
 \q       # quit
 \x
+
+#### users and permissions
+SELECT current_user;
+SELECT * FROM pg_user WHERE usename = current_user;
+SELECT usename FROM pg_user;
+SELECT usename FROM pg_user WHERE usesuper = true;
 
 \d pg_indexes
 
@@ -125,13 +131,22 @@ tar -czvf <zipfile> <pathtozip>
 
 # git
 git diff --staged
+git diff main  # current branch to local main
+git diff main -- <filepath>
+git diff main --name-only
+git diff main --name-status
+git diff origin/main # current branch to remote (since last fetch) main
+git diff origin/main...HEAD # see exactly what your PR on github will show
 git push origin main~1:main # push only upto parent commit
 git remote rename origin upstream
 git remote prune origin # remove remote branches that no longer exist on remote
 git branch -vv
 git branch master -u origin/master # similar to --set-upstream
+git branch -D <branch> # delete branch locally
+git push origin --delete <branch> # delete branch remotely. Run after deleting locally
 git commit --amend --no-edit
 git commit --amend -m
+git commit --allow-empty -m "trigger CI"
 git config --global push.default current
 git reset --hard HEAD~1 # move current branch back by 1 commit
 git reset --soft HEAD~1 # move current branch back by 1 commit but keep changes in staging area
@@ -141,6 +156,22 @@ git revert --no-commit <commit-hash> # revert a commit without creating a new co
 git revert --continue # when revert mode, continue
 git revert --abort # when revert mode, abort
 git submodule update --init --recursive # initialize all submodules
+git worktree add ../<path> # new branch has same name as path
+git worktree add ../<path> <branch> # worktree from branch that exists locally
+git worktree add -b <new-branch> ../<path> # new branch is explicitly named. new branch created off of current branch/commit
+git worktree add -b <new-branch> ../<path> origin/main # new branch created off of origin/main (not local main)
+git worktree list
+git worktree remove <worktree>
+git fetch origin && git reset --hard origin/<branch> # fetch remote changes of branch, discarding the local changes in case the two have diverged
+git checkout origin/main -- <filepath> # reset a file from the latest remote main
+git checkout main -- <filepath> # reset a file from the latest local main
+git clean -n <filepath> # delete untracked files (dry run)
+git clean -f <filepath> # actually delete untracked files
+
+# github
+gh pr create -t "<title>"
+gh pr create -t "<title>" --draft
+gh pr create --base <other-branch> # create a PR of this branch, off the other-branch
 
 # debuggers
 
@@ -148,13 +179,18 @@ git submodule update --init --recursive # initialize all submodules
 
 ### CLI
 dlv test . -- -test.v -test.count=1
+dlv test . -- -test.v -test.count=1 -test.run='test name' # wip
 
 ### shell
 c # continue
 s # step into function
 n # next line
 bt # show call stack
-p <var> # print variable
+p <var_name> # print
+break project/path/to/file:line-no # set breakpoint
+b project/path/to/file:line-no # set breakpoint
+list
+l
 
 # ssl and tls
 echo - | openssl s_client -connect example.com:443 | openssl x509 -subject -noout|more
@@ -170,6 +206,7 @@ ssh-add -l -E sha256
 ssh-add ~/.ssh/github_key
 ## test ssh connection to host
 ssh -vT git@github.com
+ssh -vT git@github-personal # using ssh host alias
 
 # misc
 seq 5 | xargs -t -n 1
@@ -206,6 +243,11 @@ ls -1 -i
 
 ls | xargs ls
 ls | xargs -n 1
+
+## sort / shuffle files
+sort -R <filename> # print file lines, shuffled
+sort -R <filename> -o <output> # shuffle to output file
+sort -R <filename> > <filename>.tmp && mv <filename>.tmp <filename>
 
 ## renaming file extension
 ls -1 | xargs -I {} basename {} .txt | xargs -I {} echo 'Dry run: mv {}.txt {}.md'
@@ -322,6 +364,9 @@ dig @<nameserver> example.com
 dig @<nameserver> example.com cname
 dig @<nameserver> example.com ns
 
+### reset dns cache
+sudo dscacheutil -flushcache; sudo killall -HUP mDNSResponder
+
 ## tcp udp sockets
 ### netcat
 nc -l 3000 # listen
@@ -342,6 +387,7 @@ netstat -tulnp | grep 8000
 ## process at a port
 ### mac
 lsof -i :54321
+netstat -vanp tcp | grep <port>
 
 ## configs
 ifconfig | grep en0 -A 5
@@ -491,6 +537,10 @@ kill -SIGKILL <PID>
 kill -SIGINT <PID>  # same as ctrl+c
 kill -SIGSTOP <PID> # same as ctrl+z
 kill -SIGCONT <PID> # same as bg <job-num>
+
+# docker
+docker stop $(docker ps -a -q) # stop all containers (running/paused/etc)
+docker stop $(docker ps -q) # stop running containers
 
 # vim
 
