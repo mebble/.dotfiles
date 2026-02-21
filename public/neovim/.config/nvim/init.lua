@@ -680,6 +680,7 @@ require('lazy').setup({
             -- https://github.com/nvim-telescope/telescope-file-browser.nvim/issues/300
             hidden = true,
             follow_symlinks = true,
+            git_status = false, -- avoids running git, speeding things up
           },
           -- frecency = {
           --   auto_validate = false,
@@ -737,7 +738,15 @@ require('lazy').setup({
       vim.keymap.set('n', '<leader>df', require('telescope.builtin').treesitter, { desc = '[D]ocument [F]ymbols (treesitter)' })
       vim.keymap.set('n', '<leader>sn', require('telescope').extensions.luasnip.luasnip, { desc = '[S]earch s[N]ippits' })
       vim.keymap.set('n', '<leader>fb', "<cmd>Telescope file_browser path=%:p:h select_buffer=true<CR>", { desc = '[F]ile [B]rowser' })
-      vim.keymap.set('n', '<leader>di', require('telescope').extensions.aerial.aerial, { desc = '[D]ocument Aer[I]al' })
+      vim.keymap.set('n', '<leader>di', function ()
+        require('telescope').extensions.aerial.aerial({
+          on_complete = {
+            function(picker)
+              picker:set_selection(picker:get_row(1))
+            end
+          }
+        })
+      end, { desc = '[D]ocument Aer[I]al' })
 
       -- Enable telescope fzf native, if installed
       pcall(require('telescope').load_extension, 'fzf')
@@ -1300,7 +1309,7 @@ local function escape_key(key)
 end
 
 -- Works for strict JSON, not JSON5 etc
-local function copy_json_path()
+local function copy_json_path(include_leading_dot)
   local ft = vim.bo.filetype
   if ft ~= "json" then
     -- print("Not a JSON file")
@@ -1342,11 +1351,15 @@ local function copy_json_path()
   end
 
   local json_path = table.concat(path_parts)
+  if not include_leading_dot then
+    json_path = json_path:gsub("^%.", "")
+  end
   vim.fn.setreg("+", json_path) -- Copy to system clipboard
   vim.notify("Copied JSON path: " .. json_path)
 end
 
-vim.keymap.set("n", "<leader>cj", copy_json_path, { desc = "[C]opy [J]son path" })
+vim.keymap.set("n", "<leader>cj", function() copy_json_path(false) end, { desc = "[C]opy [J]son path" })
+vim.keymap.set("n", "<leader>cJ", function() copy_json_path(true) end, { desc = "[C]opy [J]son path (with leading dot)" })
 
 -- The line beneath this is called `modeline`. See `:help modeline`
 -- vim: ts=2 sts=2 sw=2 et
