@@ -150,7 +150,8 @@ tar -czvf <zipfile> <pathtozip>
 
 # git
 git diff --staged
-git diff main  # current branch to local main
+git diff main  # current branch tip vs current (local) main tip
+git diff main...HEAD  # current branch tip vs branch point (branch's base)
 git diff main -- <filepath>
 git diff main --name-only
 git diff main --name-status
@@ -163,7 +164,7 @@ git branch -vv
 git branch master -u origin/master # similar to --set-upstream
 git branch -D <branch> # delete branch locally
 git push origin --delete <branch> # delete branch remotely. Run after deleting locally
-git commit --amend --no-edit
+git commit --amend --no-edit # amend without message
 git commit --amend -m
 git commit --allow-empty -m "trigger CI"
 git config --global push.default current
@@ -389,6 +390,10 @@ netstat -tulnp | grep 8000
 ### mac
 lsof -i :54321
 netstat -vanp tcp | grep <port>
+
+## dir at which process is running
+### mac
+pid=<pid> && lsof -p $pid | grep cwd
 
 ## configs
 ifconfig | grep en0 -A 5
