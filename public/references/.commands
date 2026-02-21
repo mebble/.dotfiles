@@ -1,6 +1,25 @@
 # commands
 compgen -c | grep 'python'
 
+# debuggers
+
+## delve (go)
+
+### CLI
+dlv test . -- -test.v -test.count=1
+dlv test . -- -test.v -test.count=1 -test.run='test name' # wip
+
+### shell
+c            # continue
+n            # next line
+s            # step into function
+bt           # show call stack
+p <var_name> # print
+break project/path/to/file:line-no # set breakpoint
+b project/path/to/file:line-no # set breakpoint
+list
+l
+
 # database # db
 
 ## sqlite
@@ -22,18 +41,6 @@ db.adminCommand({ listDatabases: 1 })
 db.runCommand({ listCollections: 1 })
 db.runCommand({ listIndexes: "<collection>" })
 
-## mysql
-
-### CLI
-mysql_secure_installation
-mysql --user=root --password --host localhost --port 3306 --database <db>
-mysql -u root -p -h localhost -P 3306 -D <db>
-
-### shell
-show databases;
-show tables;
-use <db>;
-describe <table>;
 
 ## postgresql
 
@@ -73,6 +80,18 @@ realpath $(which psql)
 pg_isready
 psql -h localhost -p 5432 -U neilsyiemlieh -d postgres
 createdb <db>
+## mysql
+
+### CLI
+mysql_secure_installation
+mysql --user=root --password --host localhost --port 3306 --database=dbname
+mysql -u root -p -h localhost -P 3306 -D dbname
+
+### shell
+show databases;
+show tables;
+use <db>;
+describe <table>;
 
 # java
 
@@ -153,8 +172,8 @@ git reset --soft HEAD~1 # move current branch back by 1 commit but keep changes 
 git stash push --staged # stash only staged changes
 git stash push --keep-index # stash staged and unstaged changes, but keep staged changes in staging area
 git revert --no-commit <commit-hash> # revert a commit without creating a new commit, just put changes in staging area
-git revert --continue # when revert mode, continue
-git revert --abort # when revert mode, abort
+git revert --continue # when in revert mode, continue
+git revert --abort # when in revert mode, abort
 git submodule update --init --recursive # initialize all submodules
 git worktree add ../<path> # new branch has same name as path
 git worktree add ../<path> <branch> # worktree from branch that exists locally
@@ -173,30 +192,6 @@ gh pr create -t "<title>"
 gh pr create -t "<title>" --draft
 gh pr create --base <other-branch> # create a PR of this branch, off the other-branch
 
-# debuggers
-
-## delve (go)
-
-### CLI
-dlv test . -- -test.v -test.count=1
-dlv test . -- -test.v -test.count=1 -test.run='test name' # wip
-
-### shell
-c # continue
-s # step into function
-n # next line
-bt # show call stack
-p <var_name> # print
-break project/path/to/file:line-no # set breakpoint
-b project/path/to/file:line-no # set breakpoint
-list
-l
-
-# ssl and tls
-echo - | openssl s_client -connect example.com:443 | openssl x509 -subject -noout|more
-echo - | openssl s_client -connect example.com:443 | openssl x509 -text -noout|more
-openssl rand -hex 32
-openssl rand -base64 32
 
 # ssh
 ## list keys added to ssh agent
@@ -207,6 +202,12 @@ ssh-add ~/.ssh/github_key
 ## test ssh connection to host
 ssh -vT git@github.com
 ssh -vT git@github-personal # using ssh host alias
+
+# ssl and tls
+echo - | openssl s_client -connect example.com:443 | openssl x509 -subject -noout|more
+echo - | openssl s_client -connect example.com:443 | openssl x509 -text -noout|more
+openssl rand -hex 32
+openssl rand -base64 32
 
 # misc
 seq 5 | xargs -t -n 1
