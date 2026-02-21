@@ -1089,6 +1089,24 @@ vim.opt.expandtab = true
 vim.opt.tabstop = 8
 vim.opt.softtabstop = 0
 
+-- Enable word wrap for markdown files
+local markdown_group = vim.api.nvim_create_augroup("MarkdownSettings", { clear = true })
+vim.api.nvim_create_autocmd("FileType", {
+  pattern = "markdown",
+  callback = function()
+    vim.opt_local.wrap = true         -- Enable soft wrapping (i.e. make it appear wrapped, but in reality its all on a line)
+    vim.opt_local.linebreak = true    -- Wrap at word boundaries only
+
+    -- Set up a buffer-local keymap to toggle wrap
+    vim.keymap.set("n", "<leader>ww", function()
+      local new_wrap = not vim.opt_local.wrap:get()
+      vim.opt_local.wrap = new_wrap
+      vim.opt_local.linebreak = new_wrap
+    end, { buffer = true, desc = "Toggle [W]ord [W]rap" })
+  end,
+  group = markdown_group,
+})
+
 -- https://stackoverflow.com/a/2054782/5811761
 local tabstop_group = vim.api.nvim_create_augroup('GolangTabstop', { clear = true })
 vim.api.nvim_create_autocmd('Filetype', {
@@ -1203,12 +1221,21 @@ vim.keymap.set('n', '<leader>lc', '<cmd>lclose<CR>', { desc = '[L]ocation List [
 vim.keymap.set('n', '<leader>lo', '<cmd>lolder<CR>', { desc = '[L]ocation List View [O]lder list' })
 vim.keymap.set('n', '<leader>li', '<cmd>lnewer<CR>', { desc = '[L]ocation List View [I]Newer list' })
 
--- Copy current buffer's path relative to cwd
+-- Copy absolute dir path
+vim.keymap.set("n", "<leader>cd", function()
+  local bufname = vim.api.nvim_buf_get_name(0)
+  local dir_path = vim.fn.fnamemodify(bufname, ":p:h")
+  vim.fn.setreg("+", dir_path)  -- Copy to system clipboard
+  vim.notify("Copied dir path: " .. dir_path)
+end, { noremap = true, silent = true, desc = "[C]opy file [D]ir path" })
+-- Copy relative file path
 vim.keymap.set("n", "<leader>cp", function()
-  local rel_path = vim.fn.fnamemodify(vim.api.nvim_buf_get_name(0), ":.")
+  local bufname = vim.api.nvim_buf_get_name(0)
+  local rel_path = vim.fn.fnamemodify(bufname, ":.")
   vim.fn.setreg("+", rel_path)  -- Copy to system clipboard
-  vim.notify("Copied: " .. rel_path)
+  vim.notify("Copied file path: " .. rel_path)
 end, { noremap = true, silent = true, desc = "[C]opy file [P]ath" })
+-- Copy relative file path (visual)
 vim.keymap.set("v", "<leader>cp", function()
   local bufname = vim.api.nvim_buf_get_name(0)
   local rel_path = vim.fn.fnamemodify(bufname, ":.")
@@ -1230,7 +1257,7 @@ vim.keymap.set("v", "<leader>cp", function()
   vim.fn.setreg("+", result)
 
   exit_visual_mode(function()
-    vim.notify("Copied: " .. result)
+    vim.notify("Copied file path: " .. result)
   end)
 end, { noremap = true, silent = true, desc = "[C]opy file [P]ath" })
 
@@ -1314,7 +1341,7 @@ local function copy_json_path()
     node = node:parent()
   end
 
-  local json_path = "$" .. table.concat(path_parts)
+  local json_path = table.concat(path_parts)
   vim.fn.setreg("+", json_path) -- Copy to system clipboard
   vim.notify("Copied JSON path: " .. json_path)
 end
