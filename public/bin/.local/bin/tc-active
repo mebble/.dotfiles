@@ -1,0 +1,2 @@
+#!/bin/sh
+tc | jq -e '.window_active == 1' > /dev/null

@@ -1,0 +1,12 @@
+#!/bin/sh
+
+if [ -z "$TMUX" ]; then
+  echo '{"window_index":null,"window_name":null,"window_active":null}'
+  return
+fi
+
+tmux display-message -p -t "$TMUX_PANE" '{
+  "window_index": #{window_index},
+  "window_name": "#{window_name}",
+  "window_active": #{window_active}
+}'

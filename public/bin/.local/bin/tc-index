@@ -1,0 +1,2 @@
+#!/bin/sh
+tc | jq -r '.window_index'

@@ -1,0 +1,7 @@
+#!/bin/sh
+[ -z "$TMUX" ] && exit 0
+if [ -z "$1" ]; then
+  tmux set-option -wu -t "$TMUX_PANE" @window_state
+else
+  tmux set-option -w -t "$TMUX_PANE" @window_state "$1"
+fi
