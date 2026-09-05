@@ -789,6 +789,7 @@ require('lazy').setup({
       vim.keymap.set('n', '<leader>df', require('telescope.builtin').treesitter, { desc = '[D]ocument [F]ymbols (treesitter)' })
       vim.keymap.set('n', '<leader>sn', require('telescope').extensions.luasnip.luasnip, { desc = '[S]earch s[N]ippits' })
       vim.keymap.set('n', '<leader>fb', "<cmd>Telescope file_browser path=%:p:h select_buffer=true<CR>", { desc = '[F]ile [B]rowser' })
+      vim.keymap.set('n', '<leader>fB', "<cmd>Telescope file_browser<CR>", { desc = '[F]ile [B]rowser from project root' })
       vim.keymap.set('n', '<leader>di', function ()
         require('telescope').extensions.aerial.aerial({
           on_complete = {
