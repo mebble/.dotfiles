@@ -1,6 +1,9 @@
 # commands
 compgen -c | grep 'python'
 
+# Admin by request
+pkill -9 -f "Admin By Request.app/Contents/MacOS"
+
 # debuggers
 
 ## delve (go)
@@ -140,6 +143,9 @@ brew services info postgresql@15
 brew tap
 brew tap <tap>
 brew untap <tap>
+brew link --overwrite postgresql@14 --dry-run
+brew link go@1.25
+brew unlink go@1.25
 
 # zip archives
 tar --list --file <zipfile>
@@ -162,6 +168,10 @@ git remote rename origin upstream
 git remote prune origin # remove remote branches that no longer exist on remote
 git branch -vv
 git branch master -u origin/master # similar to --set-upstream
+git branch <new-branch-name> main # create new branch off main
+git branch <new-branch-name> # create new branch off the currently checked out branch
+git checkout -b <new-branch-name> main # create new branch off main and check it out
+git checkout -b <new-branch-name> # create new branch off the current branch and check it out
 git branch -D <branch> # delete branch locally
 git push origin --delete <branch> # delete branch remotely. Run after deleting locally
 git commit --amend --no-edit # amend without message
@@ -187,12 +197,16 @@ git checkout origin/main -- <filepath> # reset a file from the latest remote mai
 git checkout main -- <filepath> # reset a file from the latest local main
 git clean -n <filepath> # delete untracked files (dry run)
 git clean -f <filepath> # actually delete untracked files
+git fetch origin main:main # fetches and updates main without needing to checkout main (i.e. can run from another branch)
+git pull # fetches and updates currently checked out branch
 
 # github
 gh pr create -t "<title>"
 gh pr create -t "<title>" --draft
 gh pr create --base <other-branch> # create a PR of this branch, off the other-branch
 
+# bazel
+bazel sync --configure # refreshes the bazel repo rules
 
 # ssh
 ## list keys added to ssh agent
@@ -327,6 +341,13 @@ tail -f /var/log/user.log
 tail -f /var/log/daemon.log
 tail -f /var/log/auth.log
 tail -f /var/log/auth.log | grep -e sshd
+
+# sleep
+## mac
+sudo pmset -a disablesleep 1 # prevent sleep
+sudo pmset -a disablesleep 0 # allow sleep
+pmset -g | grep -i sleep # see status
+
 
 # system information
 uname -a

@@ -131,7 +131,8 @@ alias sdi='cd $(fd --type d --type l -H -d 1 | fzf || dirname .)'               
 alias si='fd -H -d 1 | fzf | xargs echo -n | pbcopy'                                      # [S]earch [I]n current directory
 # https://stackoverflow.com/a/1315213
 alias sl='alias | fzf | grep -e "='\''[^'\'']*'\''" -o --color=never | cut -c 3- | rev | cut -c 2- | rev | xargs echo -n | pbcopy' # [S]earch A[L]iases
-alias sc='cat ~/.commands | ltag | fzf | ltag --trim | pbcopy'
+alias sc='cat ~/.commands | ltag | fzf | ltag --trim | pbcopy'                         # [S]earch [C]ommands
+alias gdm='git diff main...HEAD' # git diff between current branch and branch-off point on main
 
 # https://apple.stackexchange.com/a/463210
 export LANG="en_US.UTF-8"
@@ -145,6 +146,7 @@ export PATH="$PATH:$HOME/go/bin"
 
 # Other env vars
 export DENO_INSTALL="/Users/neilsyiemlieh/.deno"  # installed using the deno curl script
+export EDITOR='nvim'
 
 # Z - Jump Around: https://github.com/rupa/z
 . ~/.local/bin/z.sh
