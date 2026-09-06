@@ -188,8 +188,12 @@ require('lazy').setup({
         nmap('<leader>ws', require('telescope.builtin').lsp_dynamic_workspace_symbols, '[W]orkspace [S]ymbols')
 
         -- See `:help K` for why this keymap
-        nmap('K', vim.lsp.buf.hover, 'Hover Documentation #leaderless')
-        nmap('gs', vim.lsp.buf.signature_help, '[G]oto [S]ignature Documentation #leaderless')
+        nmap('K', function()
+          vim.lsp.buf.hover { border = 'rounded' }
+        end, 'Hover Documentation #leaderless')
+        nmap('gs', function()
+          vim.lsp.buf.signature_help { border = 'rounded' }
+        end, '[G]oto [S]ignature Documentation #leaderless')
 
         -- Lesser used LSP functionality
         nmap('<leader>D', vim.lsp.buf.declaration, '[G]oto [D]eclaration')
@@ -269,6 +273,7 @@ require('lazy').setup({
         -- basedpyright = {},
 
         clojure_lsp = {},
+        tailwindcss = {},
         -- rust_analyzer = {},
         astro = {},
 
@@ -316,13 +321,8 @@ require('lazy').setup({
       local capabilities = vim.lsp.protocol.make_client_capabilities()
       capabilities = require('cmp_nvim_lsp').default_capabilities(capabilities)
 
-      -- https://github.com/neovim/nvim-lspconfig/wiki/UI-Customization
-      -- See `:help nvim_open_win()`
-      local handlers = {
-        ["textDocument/hover"]         =  vim.lsp.with(vim.lsp.handlers.hover, { border = 'rounded' }),
-        ["textDocument/signatureHelp"] =  vim.lsp.with(vim.lsp.handlers.signature_help, { border = 'rounded' }),
-      }
       vim.diagnostic.config {
+        virtual_text = true,
         float = { border = 'rounded' },
       }
 
