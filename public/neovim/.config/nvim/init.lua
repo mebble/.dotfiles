@@ -1059,8 +1059,9 @@ require('lazy').setup({
   -- Markdown plugins
   -- https://www.youtube.com/watch?v=DgKI4hZ4EEI
   {
-    "epwalsh/obsidian.nvim",
+    "obsidian-nvim/obsidian.nvim",
     version = "*",  -- recommended, use latest release instead of latest commit
+    -- version = false, -- fetch the latest commit
     lazy = true,
     ft = "markdown",
     dependencies = {
@@ -1074,24 +1075,45 @@ require('lazy').setup({
             path = "~/Documents/notes",
           },
         },
-        ui = {
-          -- enable = false, -- disable otherwise it conflicts with render-markdown.nvim
-          checkboxes = {
-            [" "] = { char = "󰄱", hl_group = "ObsidianTodo" },
-            ["x"] = { char = "", hl_group = "ObsidianDone" },
-            ["!"] = { char = "", hl_group = "ObsidianImportant" },
-            [">"] = { char = "", hl_group = "ObsidianRightArrow" },
-            ["~"] = { char = "󰰱", hl_group = "ObsidianTilde" },
-          },
+        ui = {},
+        checkbox = {
+          order = { " ", "x", "~", "!", ">" },
         },
+        legacy_commands = false,
+        templates = {
+          folder = "templates",
+        },
+        statusline = {
+          enabled = false,
+        },
+        -- note_id_func = function(title, dir)
+        --   local builtin = require("obsidian.builtin")
+        --   vim.notify(("[note_id_func] title=%s dir=%s vault=%s"):format(
+        --     vim.inspect(title), tostring(dir), tostring(Obsidian.dir)
+        --   ))
+        --   local ok, rel = pcall(function() return dir:relative_to(Obsidian.dir) end)
+        --   vim.notify(("[note_id_func] relative_to ok=%s rel=%s"):format(tostring(ok), ok and tostring(rel) or "N/A"))
+        --   local parts = {}
+        --   if ok then
+        --     for part in tostring(rel):gmatch("[^/]+") do
+        --       table.insert(parts, builtin.title_to_slug(part))
+        --     end
+        --   end
+        --   table.insert(parts, builtin.title_to_slug(title))
+        --   local id = table.concat(parts, "-")
+        --   vim.notify(("[note_id_func] parts=%s final id=%s"):format(vim.inspect(parts), id))
+        --   return id
+        -- end,
       }
 
-      vim.keymap.set('n', '<leader>st', '<cmd>ObsidianTags<CR>', { desc = '[S]earch Obsidian [T]ags' })
+      vim.keymap.set('n', '<leader>st', '<cmd>Obsidian tags<CR>', { desc = '[S]earch Obsidian [T]ags' })
+      vim.keymap.set('n', '<leader>sop', '<cmd>Obsidian template<CR>', { desc = '[S]earch [O]bsidian Tem[P]lates' })
 
       -- For obsidian.nvim to render markdown
       local obsidian_markdown_group = vim.api.nvim_create_augroup('ObsidianMarkdownGroup', { clear = true })
       vim.api.nvim_create_autocmd('Filetype', {
         callback = function()
+          -- https://github.com/epwalsh/obsidian.nvim/issues/286
           vim.opt_local.conceallevel = 1
         end,
         group = obsidian_markdown_group,
