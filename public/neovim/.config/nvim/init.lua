@@ -144,7 +144,7 @@ require('lazy').setup({
     'neovim/nvim-lspconfig',
     dependencies = {
       -- Automatically install LSPs to stdpath for neovim
-      { 'williamboman/mason.nvim', config = true },
+      { 'mason-org/mason.nvim', config = true },
       'williamboman/mason-lspconfig.nvim',
 
       -- Useful status updates for LSP
@@ -224,10 +224,50 @@ require('lazy').setup({
       --  define the property 'filetypes' to the map in question.
       -- https://github.com/neovim/nvim-lspconfig
       -- https://github.com/neovim/nvim-lspconfig/blob/master/doc/server_configurations.md
+      -- nvim 0.11 API changes:
+      -- https://www.reddit.com/r/neovim/comments/1nmh99k/beware_the_old_nvimlspconfig_setup_api_is/
+      -- https://www.reddit.com/r/neovim/comments/1jw0zav/psa_heres_a_quick_guide_to_using_the_new_built_in/
       local servers = {
         -- clangd = {},
         gopls = {},
-        pyright = {},
+
+        -- Python LSPs:
+        -- Alternatives (in order of preference):
+        -- https://github.com/facebook/pyrefly
+        -- https://github.com/astral-sh/ty
+        -- https://github.com/detachhead/basedpyright
+        -- https://github.com/pappasam/jedi-language-server
+        -- https://github.com/astral-sh/ruff/tree/main/crates/ruff_server
+        -- Resources:
+        -- https://blog.edward-li.com/tech/comparing-pyrefly-vs-ty/
+        -- https://www.reddit.com/r/neovim/comments/1mgwt7p/neovim_pyright_lsp_is_super_slow_compared_to/
+        -- https://www.reddit.com/r/neovim/comments/1i7ssc8/desperate_for_a_good_lsp_for_python/
+        -- pyright = {},
+        -- Copied from https://github.com/neovim/nvim-lspconfig/blob/master/lsp/pyrefly.lua
+        -- We need to set some config here otherwise it breaks with error:
+        -- cannot start pyrefly due to config error: .../Cellar/neovim/0.11.1/share/nvim/runtime/lua/vim/lsp.lua:462: cmd: expected expected function or table with executable command, got nil
+        -- Thrown by: https://github.com/neovim/neovim/blob/15b9118ac0b6afabe821369e7a8bea8776bee416/runtime/lua/vim/lsp.lua#L424
+        -- See logs in ~/.local/state/nvim/lsp.log
+        -- Issue: Pyrefly doesn't terminate, uses up a lot of CPU: https://github.com/facebook/pyrefly/issues/1016
+        -- pyrefly = {
+          -- cmd = { 'pyrefly', 'lsp' },
+          -- filetypes = { 'python' },
+          -- root_markers = {
+          --   'pyrefly.toml',
+           --   'pyproject.toml',
+          --   'setup.py',
+          --   'setup.cfg',
+          --   'requirements.txt',
+          --   'Pipfile',
+          --   '.git',
+          -- },
+          -- on_exit = function(code, _, _)
+          --   vim.notify('Closing Pyrefly LSP exited with code: ' .. code, vim.log.levels.INFO)
+          -- end,
+        -- },
+        ty = {},
+        -- basedpyright = {},
+
         clojure_lsp = {},
         -- rust_analyzer = {},
         astro = {},
@@ -236,20 +276,34 @@ require('lazy').setup({
         denols = {
           root_dir = require("lspconfig").util.root_pattern("deno.json", "deno.jsonc"),
         },
-        -- https://github.com/neovim/nvim-lspconfig/pull/3232#issuecomment-2331025714
-        ts_ls = {
-          root_dir = require("lspconfig").util.root_pattern("package.json"),
-          single_file_support = false,
-        },
-
+        ts_ls = {},
         terraformls = {},
         html = { filetypes = { 'html', 'twig', 'hbs'} },
 
+        -- https://github.com/neovim/neovim/issues/21686#issuecomment-1522446128
         lua_ls = {
-          Lua = {
-            workspace = { checkThirdParty = false },
-            telemetry = { enable = false },
-          },
+          settings = {
+            Lua = {
+              runtime = {
+                -- Tell the language server which version of Lua you're using
+                -- (most likely LuaJIT in the case of Neovim)
+                version = 'LuaJIT',
+              },
+              diagnostics = {
+                -- Get the language server to recognize the `vim` global
+                globals = {
+                  'vim',
+                  'require'
+                },
+              },
+              workspace = {
+                -- Make the server aware of Neovim runtime files
+                library = vim.api.nvim_get_runtime_file("", true),
+                checkThirdParty = false,
+              },
+              telemetry = { enable = false },
+            },
+          }
         },
 
         tailwindcss = {},
@@ -276,25 +330,22 @@ require('lazy').setup({
       local mason = require('mason')
       local mason_lspconfig = require 'mason-lspconfig'
 
+      local default_config = {
+        capabilities = capabilities,
+        on_attach = on_attach,
+      }
+      for server_name, server_config in pairs(servers) do
+        -- Note: server_config can have a `settings` field whose schema is specific to that LSP. Regardless, it will be merged appropriately
+        vim.lsp.config(
+          server_name,
+          vim.tbl_deep_extend('force', default_config, server_config)
+        )
+      end
+
       mason.setup()
       mason_lspconfig.setup {
+        automatic_enable = true,
         ensure_installed = vim.tbl_keys(servers),
-      }
-
-      -- https://neovim.discourse.group/t/cannot-serialize-function-type-not-supported/4542/3
-      mason_lspconfig.setup_handlers {
-        function(server_name)
-          require('lspconfig')[server_name].setup {
-            capabilities = capabilities,
-            on_attach = on_attach,
-            handlers = handlers,
-            autostart = (servers[server_name] or {}).autostart,
-            root_dir = (servers[server_name] or {}).root_dir,
-            settings = (servers[server_name] or {}).settings,
-            filetypes = (servers[server_name] or {}).filetypes,
-            single_file_support = (servers[server_name] or {}).single_file_support,
-          }
-        end
       }
     end
   },
