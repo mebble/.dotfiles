@@ -546,9 +546,6 @@ require('lazy').setup({
           return vim.fn.executable 'make' == 1
         end,
       },
-      -- {
-      --   "nvim-telescope/telescope-frecency.nvim",
-      -- },
       {
         "nvim-telescope/telescope-live-grep-args.nvim" ,
         -- This will not install any breaking changes.
@@ -734,9 +731,6 @@ require('lazy').setup({
             follow_symlinks = true,
             git_status = false, -- avoids running git, speeding things up
           },
-          -- frecency = {
-          --   auto_validate = false,
-          -- },
           aerial = {
             show_nesting = {
               ["_"] = true,
@@ -767,7 +761,6 @@ require('lazy').setup({
       end
 
       -- See `:help telescope.builtin`
-      -- vim.keymap.set('n', '<leader>?', require('telescope').extensions.frecency.frecency, { desc = '[?] Find recently opened files' })
       vim.keymap.set('n', '<leader>/', require('telescope.builtin').current_buffer_fuzzy_find, { desc = '[/] Fuzzily search in current buffer' })
       vim.keymap.set('n', '<leader>gc', require('telescope.builtin').git_commits, { desc = 'Search [G]it [C]ommits' })
       vim.keymap.set('n', '<leader>gs', require('telescope.builtin').git_status, { desc = 'Search [G]it [S]tatus' })
@@ -805,7 +798,6 @@ require('lazy').setup({
       pcall(require('telescope').load_extension, 'fzf')
       pcall(require('telescope').load_extension, 'luasnip')
       pcall(require('telescope').load_extension, 'file_browser')
-      -- pcall(require('telescope').load_extension, "frecency")
       pcall(require('telescope').load_extension, "aerial")
       pcall(require('telescope').load_extension, "live_grep_args")
     end
