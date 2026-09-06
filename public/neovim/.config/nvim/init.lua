@@ -156,8 +156,12 @@ require('lazy').setup({
     },
     config = function()
       -- Diagnostic keymaps
-      vim.keymap.set('n', '<leader>dp', vim.diagnostic.goto_prev, { desc = '[D]iagnostic: Go to [P]revious diagnostic message' })
-      vim.keymap.set('n', '<leader>dn', vim.diagnostic.goto_next, { desc = '[D]iagnostic: Go to [N]ext diagnostic message' })
+      vim.keymap.set('n', '<leader>dp', function()
+        vim.diagnostic.jump { count = -1, float = true }
+      end, { desc = '[D]iagnostic: Go to [P]revious diagnostic message' })
+      vim.keymap.set('n', '<leader>dn', function()
+        vim.diagnostic.jump { count = 1, float = true }
+      end, { desc = '[D]iagnostic: Go to [N]ext diagnostic message' })
       vim.keymap.set('n', '<leader>e', vim.diagnostic.open_float, { desc = 'Diagnostic: Open floating diagnostic message' })
       vim.keymap.set('n', '<leader>q', vim.diagnostic.setloclist, { desc = 'Diagnostic: Open diagnostics list' })
 
@@ -181,7 +185,7 @@ require('lazy').setup({
         nmap('<leader>ca', vim.lsp.buf.code_action, '[C]ode [A]ction')
 
         nmap('gd', require('telescope.builtin').lsp_definitions, '[G]oto [D]efinition #leaderless')
-        nmap('gD', vim.lsp.buf.type_definition, '[G]oto Type [D]efinition #leaderless')
+        nmap('gD', require('telescope.builtin').lsp_type_definitions, '[G]oto Type [D]efinition #leaderless')
         nmap('gr', require('telescope.builtin').lsp_references, '[G]oto [R]eferences #leaderless')
         nmap('gI', require('telescope.builtin').lsp_implementations, '[G]oto [I]mplementation #leaderless')
         nmap('<leader>ds', require('telescope.builtin').lsp_document_symbols, '[D]ocument [S]ymbols')
@@ -531,7 +535,7 @@ require('lazy').setup({
   -- Fuzzy Finder (files, lsp, etc)
   {
     'nvim-telescope/telescope.nvim',
-    branch = '0.1.x',
+    version = "*",  -- recommended, use latest release instead of latest commit
     dependencies = {
       'nvim-lua/plenary.nvim',
       -- Fuzzy Finder Algorithm which requires local dependencies to be built.
@@ -582,6 +586,8 @@ require('lazy').setup({
           path_display = function(_, path)
             local sep = package.config:sub(1, 1)
 
+            local COLOUR_FILENAME = "TelescopeResultsNormal"
+            local COLOUR_PATH = "Conceal"
             local MAX_PART_LEN = 20              -- Max allowed length per part
             local MIN_TRIM_LEN = 3               -- Do not trim if part length is under this
             local TOTAL_LEN_LIMIT = 80           -- Trigger trimming only if combined raw length > this
@@ -613,19 +619,18 @@ require('lazy').setup({
 
             -- If no directory parts, return filename only — avoid showing ()
             if vim.tbl_isempty(parts) then
-              return filename, { { { 1, #filename }, "Constant" } }
+              return filename, { { { 0, #filename }, COLOUR_FILENAME } }
             end
 
             -- Get the first 5 directories from the root
             local top = vim.list_slice(parts, 1, math.min(TOP_DIR_COUNT, total_parts - 1))
 
-            -- Get the last 2 directories before the file
+            -- Get the last 3 directories before the file
             -- Ensure we skip overlapping segments with 'top'
             local bottom_start = math.max(total_parts - BOTTOM_DIR_COUNT, #top + 1)
             local bottom = vim.list_slice(parts, bottom_start, total_parts - 1)
 
             local has_bottom = #bottom > 0
-            local bottom_overlaps_top = top[#top] == bottom[1] -- Avoid duplicating segments already shown in 'top'
             local has_gap = total_parts - 1 > (#top + #bottom) -- Only show ellipsis if there's a hidden gap between top and bottom
 
             -- Raw length calculation (excluding formatting)
@@ -653,15 +658,25 @@ require('lazy').setup({
             end
 
             local context = table.concat(top, sep)
-            if has_bottom and not bottom_overlaps_top and has_gap then
+            if has_bottom and has_gap then
               context = context .. sep .. GAP_FILLER .. sep .. table.concat(bottom, sep)
-            elseif has_bottom and not bottom_overlaps_top then
+            elseif has_bottom then
               context = context .. sep .. table.concat(bottom, sep)
             end
 
             context = context .. sep .. base_part
+            local display = string.format("%s (%s)", filename, context)
 
-            return string.format("%s (%s)", filename, context), { { { 1, #filename }, "Constant" } }
+            -- Each entry in the table is a tuple of [range, highlight-group], where range is itself a tuple of [start-char, end-char] of the display text
+            return display, {
+              {
+                { 0, #filename }, COLOUR_FILENAME
+              },
+              -- path: highlight just what is inside the parens: skip 2 chars for the space and the "(", back off 1 for the ")"
+              {
+                { #filename + 2, #display - 1 }, COLOUR_PATH
+              },
+            }
           end,
 
           -- See `:help telescope.layout`
@@ -717,7 +732,8 @@ require('lazy').setup({
             hidden = true,
           },
           lsp_references = {
-            include_declaration = false
+            include_declaration = false,
+            show_line = false,
           },
 
           -- https://github.com/nvim-telescope/telescope.nvim/issues/2368
@@ -1356,11 +1372,11 @@ end
 vim.keymap.set('t', '<esc>', [[<C-\><C-n>]])
 
 -- [[ Highlight on yank ]]
--- See `:help vim.highlight.on_yank()`
+-- See `:help vim.hl.on_yank()`
 local highlight_group = vim.api.nvim_create_augroup('YankHighlight', { clear = true })
 vim.api.nvim_create_autocmd('TextYankPost', {
   callback = function()
-    vim.highlight.on_yank()
+    vim.hl.on_yank()
   end,
   group = highlight_group,
   pattern = '*',
