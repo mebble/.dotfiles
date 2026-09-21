@@ -586,6 +586,9 @@ require('lazy').setup({
           path_display = function(_, path)
             local sep = package.config:sub(1, 1)
 
+            -- Resolve paths from absolte to project-root
+            path = vim.fs.relpath(vim.uv.cwd(), path) or path
+
             local COLOUR_FILENAME = "TelescopeResultsNormal"
             local COLOUR_PATH = "Conceal"
             local MAX_PART_LEN = 20              -- Max allowed length per part
@@ -1027,10 +1030,10 @@ require('lazy').setup({
       vim.keymap.set("n", "<leader>hc", function() harpoon:list():clear() end, { desc = '[H]arpoon [C]lear' })
       vim.keymap.set("n", "<leader>hv", function() harpoon.ui:toggle_quick_menu(harpoon:list()) end, { desc = '[H]arpoon [V]iew' })
 
-      vim.keymap.set("n", "<leader>n", function() harpoon:list():select(1) end, { desc = 'Harpoon 1' })
-      vim.keymap.set("n", "<leader>j", function() harpoon:list():select(2) end, { desc = 'Harpoon 2' })
-      vim.keymap.set("n", "<leader>k", function() harpoon:list():select(3) end, { desc = 'Harpoon 3' })
-      vim.keymap.set("n", "<leader>p", function() harpoon:list():select(4) end, { desc = 'Harpoon 4' })
+      -- vim.keymap.set("n", "<leader>n", function() harpoon:list():select(1) end, { desc = 'Harpoon 1' })
+      -- vim.keymap.set("n", "<leader>j", function() harpoon:list():select(2) end, { desc = 'Harpoon 2' })
+      -- vim.keymap.set("n", "<leader>k", function() harpoon:list():select(3) end, { desc = 'Harpoon 3' })
+      -- vim.keymap.set("n", "<leader>p", function() harpoon:list():select(4) end, { desc = 'Harpoon 4' })
     end
   },
   {
@@ -1095,28 +1098,32 @@ require('lazy').setup({
         statusline = {
           enabled = false,
         },
-        -- note_id_func = function(title, dir)
-        --   local builtin = require("obsidian.builtin")
-        --   vim.notify(("[note_id_func] title=%s dir=%s vault=%s"):format(
-        --     vim.inspect(title), tostring(dir), tostring(Obsidian.dir)
-        --   ))
-        --   local ok, rel = pcall(function() return dir:relative_to(Obsidian.dir) end)
-        --   vim.notify(("[note_id_func] relative_to ok=%s rel=%s"):format(tostring(ok), ok and tostring(rel) or "N/A"))
-        --   local parts = {}
-        --   if ok then
-        --     for part in tostring(rel):gmatch("[^/]+") do
-        --       table.insert(parts, builtin.title_to_slug(part))
-        --     end
-        --   end
-        --   table.insert(parts, builtin.title_to_slug(title))
-        --   local id = table.concat(parts, "-")
-        --   vim.notify(("[note_id_func] parts=%s final id=%s"):format(vim.inspect(parts), id))
-        --   return id
-        -- end,
+        ---@param title string Set to the last segment of the path supplied in the `Obsidian new` prompt
+        ---@param dir string The dir the note is created in. Set to the path prefix of the title in the `Obsidian new` prompt. If not supplied as a path prefix, it is set to the dir of the currently opened note. If supplied, it is relative to the vault root. If the prompt value is set as a filename (i.e. with a file extension), it's again relative to the vault root.
+        ---@return string id The `id` field of the note
+        note_id_func = function(title, dir)
+          local builtin = require("obsidian.builtin")
+          vim.notify(("[note_id_func] title=%s dir=%s vault=%s"):format(
+            vim.inspect(title), tostring(dir), tostring(Obsidian.dir)
+          ))
+          local ok, rel = pcall(function() return dir:relative_to(Obsidian.dir) end)
+          vim.notify(("[note_id_func] relative_to ok=%s rel=%s"):format(tostring(ok), ok and tostring(rel) or "N/A"))
+          local parts = {}
+          if ok then
+            for part in tostring(rel):gmatch("[^/]+") do
+              table.insert(parts, builtin.title_to_slug(part))
+            end
+          end
+          table.insert(parts, builtin.title_to_slug(title))
+          local id = table.concat(parts, "-")
+          vim.notify(("[note_id_func] parts=%s final id=%s"):format(vim.inspect(parts), id))
+          return id
+        end,
       }
 
       vim.keymap.set('n', '<leader>st', '<cmd>Obsidian tags<CR>', { desc = '[S]earch Obsidian [T]ags' })
-      vim.keymap.set('n', '<leader>sop', '<cmd>Obsidian template<CR>', { desc = '[S]earch [O]bsidian Tem[P]lates' })
+      vim.keymap.set('n', '<leader>sl', '<cmd>Obsidian template<CR>', { desc = '[S]earch Obsidian Temp[L]ates' })
+      vim.keymap.set('n', '<leader>n', '<cmd>Obsidian new<CR>', { desc = 'Obsidian [N]ew Note' })
 
       -- For obsidian.nvim to render markdown
       local obsidian_markdown_group = vim.api.nvim_create_augroup('ObsidianMarkdownGroup', { clear = true })
@@ -1313,20 +1320,21 @@ vim.keymap.set('n', '<leader>lc', '<cmd>lclose<CR>', { desc = '[L]ocation List [
 vim.keymap.set('n', '<leader>lo', '<cmd>lolder<CR>', { desc = '[L]ocation List View [O]lder list' })
 vim.keymap.set('n', '<leader>li', '<cmd>lnewer<CR>', { desc = '[L]ocation List View [I]Newer list' })
 
--- Copy absolute dir path
-vim.keymap.set("n", "<leader>cd", function()
-  local bufname = vim.api.nvim_buf_get_name(0)
-  local dir_path = vim.fn.fnamemodify(bufname, ":p:h")
-  vim.fn.setreg("+", dir_path)  -- Copy to system clipboard
-  vim.notify("Copied dir path: " .. dir_path)
-end, { noremap = true, silent = true, desc = "[C]opy file [D]ir path" })
 -- Copy relative file path
 vim.keymap.set("n", "<leader>cp", function()
   local bufname = vim.api.nvim_buf_get_name(0)
-  local rel_path = vim.fn.fnamemodify(bufname, ":.")
-  vim.fn.setreg("+", rel_path)  -- Copy to system clipboard
-  vim.notify("Copied file path: " .. rel_path)
-end, { noremap = true, silent = true, desc = "[C]opy file [P]ath" })
+  local file_path = vim.fn.fnamemodify(bufname, ":.")
+  vim.fn.setreg("+", file_path)  -- Copy to system clipboard
+  vim.notify("Copied file path: " .. file_path)
+end, { noremap = true, silent = true, desc = "[c]opy relative file [P]ath" })
+
+-- Copy absolute file path
+vim.keymap.set("n", "<leader>cP", function()
+  local file_path = vim.api.nvim_buf_get_name(0)
+  vim.fn.setreg("+", file_path)
+  vim.notify("Copied file path: " .. file_path)
+end, { noremap = true, silent = true, desc = "[c]opy absolute file [p]ath" })
+
 -- Copy relative file path (visual)
 vim.keymap.set("v", "<leader>cp", function()
   local bufname = vim.api.nvim_buf_get_name(0)
@@ -1352,6 +1360,22 @@ vim.keymap.set("v", "<leader>cp", function()
     vim.notify("Copied file path: " .. result)
   end)
 end, { noremap = true, silent = true, desc = "[C]opy file [P]ath" })
+
+-- Copy relative dir path
+vim.keymap.set("n", "<leader>cd", function()
+  -- ":p" ensures an absolute path first, then ":." relativizes it to CWD, then ":h" gets the directory
+  local dir_path = vim.fn.expand("%:p:.:h")
+  vim.fn.setreg("+", dir_path) -- Copy to system clipboard
+  vim.notify("Copied directory path: " .. dir_path)
+end, { noremap = true, silent = true, desc = "[c]opy relative [d]irectory path" })
+
+-- Copy absolute dir path
+vim.keymap.set("n", "<leader>cD", function()
+  -- "%:p:h" gets the absolute path of the file and strips the filename
+  local dir_path = vim.fn.expand("%:p:h")
+  vim.fn.setreg("+", dir_path) -- Copy to system clipboard
+  vim.notify("Copied directory path: " .. dir_path)
+end, { noremap = true, silent = true, desc = "[c]opy absolute [D]irectory path" })
 
 -- [[ Custom Text Objects ]]
 -- https://thevaluable.dev/vim-create-text-objects/
