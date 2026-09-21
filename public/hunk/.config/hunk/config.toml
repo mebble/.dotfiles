@@ -1,0 +1,14 @@
+theme = "github-dark-default"
+mode = "unified"
+line_numbers = true
+wrap_lines = false
+hunk_headers = true
+menu_bar = true
+agent_notes = true
+copy_decorations = true
+cursor_line = "row"
+
+[keybindings]
+"hunk.review.previousNote" = "{"
+"hunk.review.nextNote" = "}"
+"hunk.app.quit" = "ctrl+q"
