@@ -307,7 +307,9 @@ require('lazy').setup({
               },
               workspace = {
                 -- Make the server aware of Neovim runtime files
-                library = vim.api.nvim_get_runtime_file("", true),
+                library = vim.tbl_filter(function(path)
+                  return path ~= vim.fn.stdpath('config')
+                end, vim.api.nvim_get_runtime_file("", true)),
                 checkThirdParty = false,
               },
               telemetry = { enable = false },
