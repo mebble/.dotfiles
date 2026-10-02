@@ -792,8 +792,8 @@ require('lazy').setup({
       vim.keymap.set('n', '<leader>sh', require('telescope.builtin').help_tags, { desc = '[S]earch [H]elp' })
       vim.keymap.set('n', '<leader>sw', require('telescope.builtin').grep_string, { desc = '[S]earch current [W]ord' })
       vim.keymap.set('x', '<leader>sw', function() require('telescope.builtin').grep_string({ search = get_visual()[1] or "" }) end, { desc = '[S]earch current [W]ord' })
-      vim.keymap.set('n', '<leader>sW', function() require('telescope.builtin').grep_string({ word_match = '-w' }) end, { desc = '[S]earch current [W]ord (strict)' })
-      vim.keymap.set('x', '<leader>sW', function() require('telescope.builtin').grep_string({ search = get_visual()[1] or "", word_match = '-w' }) end, { desc = '[S]earch current [W]ord (strict)' })
+      vim.keymap.set('n', '<leader>sW', function() require('telescope.builtin').grep_string({ additional_args = { '-w' } }) end, { desc = '[S]earch current [W]ord (strict)' })
+      vim.keymap.set('x', '<leader>sW', function() require('telescope.builtin').grep_string({ search = get_visual()[1] or "", additional_args = { '-w' } }) end, { desc = '[S]earch current [W]ord (strict)' })
       vim.keymap.set('n', "<leader>sg", require('telescope').extensions.live_grep_args.live_grep_args, { desc = '[S]earch by [G]rep' }) -- replaces require('telescope.builtin').live_grep
       vim.keymap.set('x', "<leader>sg", function() require('telescope-live-grep-args.shortcuts').grep_visual_selection({ postfix = live_grep_args_postfix }) end, { desc = '[S]earch by [G]rep' })
       vim.keymap.set('n', '<leader>sd', require('telescope.builtin').diagnostics, { desc = '[S]earch [D]iagnostics' })
