@@ -769,16 +769,18 @@ require('lazy').setup({
         },
       }
 
-      -- From https://github.com/nvim-telescope/telescope-live-grep-args.nvim/blob/8ad632f793fd437865f99af5684f78300dac93fb/lua/telescope-live-grep-args/shortcuts.lua#L8
-      local function get_visual()
-        local _, ls, cs = unpack(vim.fn.getpos("v"))
-        local _, le, ce = unpack(vim.fn.getpos("."))
+      local function get_visual_search_text()
+        local lines = vim.fn.getregion(vim.fn.getpos("v"), vim.fn.getpos("."), { type = vim.fn.mode() })
+        local text = lines[1] or ""
+        return text
+      end
 
-        -- nvim_buf_get_text requires start and end args be in correct order
-        ls, le = math.min(ls, le), math.max(ls, le)
-        cs, ce = math.min(cs, ce), math.max(cs, ce)
-
-        return vim.api.nvim_buf_get_text(0, ls - 1, cs - 1, le - 1, ce, {})
+      -- live_grep_args' own grep_visual_selection misreads linewise and multibyte selections
+      -- Works just like process_grep_under_text at https://github.com/nvim-telescope/telescope-live-grep-args.nvim/blob/53e9df55b3651dd7cf77e172f1e8c9a17407acca/lua/telescope-live-grep-args/shortcuts.lua#L25
+      local function grep_visual(opts)
+        local text = vim.trim(get_visual_search_text())
+        opts.default_text = require('telescope-live-grep-args.helpers').quote(text) .. live_grep_args_postfix
+        require('telescope').extensions.live_grep_args.live_grep_args(opts)
       end
 
       -- See `:help telescope.builtin`
@@ -791,11 +793,11 @@ require('lazy').setup({
       vim.keymap.set('n', '<leader>sk', require('telescope.builtin').keymaps, { desc = '[S]earch [K]eymaps' })
       vim.keymap.set('n', '<leader>sh', require('telescope.builtin').help_tags, { desc = '[S]earch [H]elp' })
       vim.keymap.set('n', '<leader>sw', require('telescope.builtin').grep_string, { desc = '[S]earch current [W]ord' })
-      vim.keymap.set('x', '<leader>sw', function() require('telescope.builtin').grep_string({ search = get_visual()[1] or "" }) end, { desc = '[S]earch current [W]ord' })
+      vim.keymap.set('x', '<leader>sw', function() require('telescope.builtin').grep_string({ search = get_visual_search_text() }) end, { desc = '[S]earch current [W]ord' })
       vim.keymap.set('n', '<leader>sW', function() require('telescope.builtin').grep_string({ additional_args = { '-w' } }) end, { desc = '[S]earch current [W]ord (strict)' })
-      vim.keymap.set('x', '<leader>sW', function() require('telescope.builtin').grep_string({ search = get_visual()[1] or "", additional_args = { '-w' } }) end, { desc = '[S]earch current [W]ord (strict)' })
+      vim.keymap.set('x', '<leader>sW', function() require('telescope.builtin').grep_string({ search = get_visual_search_text(), additional_args = { '-w' } }) end, { desc = '[S]earch current [W]ord (strict)' })
       vim.keymap.set('n', "<leader>sg", require('telescope').extensions.live_grep_args.live_grep_args, { desc = '[S]earch by [G]rep' }) -- replaces require('telescope.builtin').live_grep
-      vim.keymap.set('x', "<leader>sg", function() require('telescope-live-grep-args.shortcuts').grep_visual_selection({ postfix = live_grep_args_postfix }) end, { desc = '[S]earch by [G]rep' })
+      vim.keymap.set('x', "<leader>sg", function() grep_visual({}) end, { desc = '[S]earch by [G]rep' })
       vim.keymap.set('n', '<leader>sd', require('telescope.builtin').diagnostics, { desc = '[S]earch [D]iagnostics' })
       vim.keymap.set('n', '<leader>sc', require('telescope.builtin').commands, { desc = '[S]earch [C]ommands' })
       vim.keymap.set('n', '<leader>so', require('telescope.builtin').command_history, { desc = '[S]earch [O]ld commands' })
