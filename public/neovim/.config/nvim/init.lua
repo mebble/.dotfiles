@@ -910,7 +910,7 @@ require('lazy').setup({
   {
     "christoomey/vim-tmux-navigator",
     cond = function()
-      return vim.env.HERDR_PANE_ID == nil
+      return vim.env.HERDR_PANE_ID == nil and (vim.env.TMUX ~= nil and vim.env.TMUX ~= '')
     end,
   },
   {
@@ -935,6 +935,12 @@ require('lazy').setup({
         })
       end)
     end,
+  },
+  {
+    'baggiponte/rex-navigator.nvim',
+    main = 'rex-navigator',
+    lazy = false,
+    opts = {},
   },
   {
     'nvim-treesitter/nvim-treesitter-context',
@@ -1300,14 +1306,14 @@ vim.keymap.set('n', 'j', "v:count == 0 ? 'gj' : 'j'", { expr = true, silent = tr
 
 -- https://github.com/NvChad/NvChad/blob/v2.0/lua/core/mappings.lua
 vim.keymap.set('n', '<esc>', '<cmd>noh<CR>', { desc = 'Clear highlights' })
-vim.keymap.set('n', '<C-h>', '<C-w>h', { desc = 'Window left' })  -- Overridden by the tmux navigate equivalents
-vim.keymap.set('n', '<C-j>', '<C-w>j', { desc = 'Window down' })
-vim.keymap.set('n', '<C-k>', '<C-w>k', { desc = 'Window up' })
-vim.keymap.set('n', '<C-l>', '<C-w>l', { desc = 'Window right' })
-vim.keymap.set('n', '<C-h>', '<cmd>TmuxNavigateLeft<CR>', { desc = 'Window left' })
-vim.keymap.set('n', '<C-j>', '<cmd>TmuxNavigateDown<CR>', { desc = 'Window down' })
-vim.keymap.set('n', '<C-k>', '<cmd>TmuxNavigateUp<CR>', { desc = 'Window up' })
-vim.keymap.set('n', '<C-l>', '<cmd>TmuxNavigateRight<CR>', { desc = 'Window right' })
+-- vim.keymap.set('n', '<C-h>', '<C-w>h', { desc = 'Window left' })  -- Overridden by the tmux navigate equivalents. Update: Commenting out since the rex-navigator plugin does this
+-- vim.keymap.set('n', '<C-j>', '<C-w>j', { desc = 'Window down' })
+-- vim.keymap.set('n', '<C-k>', '<C-w>k', { desc = 'Window up' })
+-- vim.keymap.set('n', '<C-l>', '<C-w>l', { desc = 'Window right' })
+-- vim.keymap.set('n', '<C-h>', '<cmd>TmuxNavigateLeft<CR>', { desc = 'Window left' })
+-- vim.keymap.set('n', '<C-j>', '<cmd>TmuxNavigateDown<CR>', { desc = 'Window down' })
+-- vim.keymap.set('n', '<C-k>', '<cmd>TmuxNavigateUp<CR>', { desc = 'Window up' })
+-- vim.keymap.set('n', '<C-l>', '<cmd>TmuxNavigateRight<CR>', { desc = 'Window right' })
 vim.keymap.set('i', '<C-h>', '<Left>', { desc = 'Move left' })
 vim.keymap.set('i', '<C-j>', '<Down>', { desc = 'Move down' })
 vim.keymap.set('i', '<C-k>', '<Up>', { desc = 'Move up' })
